@@ -1,0 +1,1 @@
+const pokemonMaxStat = 255;
