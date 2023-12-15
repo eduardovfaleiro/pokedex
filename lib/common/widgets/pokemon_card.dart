@@ -33,7 +33,7 @@ class PokemonCard extends StatelessWidget {
       child: Ink(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(8),
-          color: PokemonColorsService.getMixedColor(pokemon.typesStr).withOpacity(0.5),
+          color: PokemonColorsService.get(pokemon.typesStr.first).withOpacity(0.65),
         ),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
         child: Row(

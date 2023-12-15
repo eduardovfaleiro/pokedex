@@ -3,6 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/common/services/pokemon_colors_service.dart';
 import 'package:pokedex/common/widgets/pokemon_image_loader.dart';
+import 'package:pokedex/common/widgets/pokemon_type_image_loader.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
 import 'package:pokedex/utils/capitalize_extension.dart';
 import 'package:pokedex/utils/const/pokemon_max_stat.dart';
@@ -42,7 +43,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
         child: Stack(
           children: [
             Padding(
-              padding: const EdgeInsets.only(top: 125),
+              padding: const EdgeInsets.only(top: 130),
               child: Container(
                 width: double.infinity,
                 decoration: BoxDecoration(
@@ -81,7 +82,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                         color: _darkerPokemonColor,
                       ),
                     ),
-                    const SizedBox(width: 12),
+                    const SizedBox(height: 12),
                     Row(
                       mainAxisSize: MainAxisSize.max,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -96,12 +97,13 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                               color: Colors.white,
                               boxShadow: _boxShadow,
                             ),
-                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                             child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                _getLabelValue('Height', '23cm'),
-                                const SizedBox(width: 8),
-                                _getLabelValue('Weight', '6,9kg'),
+                                _buildLabelValue('Height', '23cm'),
+                                const SizedBox(width: 32),
+                                _buildLabelValue('Weight', '6,9kg'),
                               ],
                             ),
                           ),
@@ -117,13 +119,13 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                               color: Colors.white,
                               boxShadow: _boxShadow,
                             ),
+                            alignment: Alignment.center,
                             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                            child: Row(
-                              children: [
-                                _getLabelValue('Height', '23cm'),
-                                const SizedBox(width: 8),
-                                _getLabelValue('Weight', '6,9kg'),
-                              ],
+                            child: Wrap(
+                              spacing: 32,
+                              children: List.generate(widget.pokemon.typesStr.length, (index) {
+                                return _buildLabelIcon(widget.pokemon.typesStr[index]);
+                              }),
                             ),
                           ),
                         ),
@@ -140,25 +142,25 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          _getStats(
+                          _buildPaddedStats(
                             icon: Icon(CupertinoIcons.heart_fill, color: Colors.red[800]),
                             label: 'HP',
                             level: widget.pokemon.stats.health,
                             color: Colors.red[800]!,
                           ),
-                          _getStats(
+                          _buildPaddedStats(
                             icon: Icon(CommunityMaterialIcons.sword, color: Colors.yellow[800]),
                             label: 'ATK',
                             level: widget.pokemon.stats.attack,
                             color: Colors.yellow[800]!,
                           ),
-                          _getStats(
+                          _buildPaddedStats(
                             icon: Icon(CommunityMaterialIcons.shield_sun, color: Colors.blue[800]!),
                             label: 'DEF',
                             level: widget.pokemon.stats.defense,
                             color: Colors.blue[800]!,
                           ),
-                          _getStats(
+                          _buildPaddedStats(
                             icon: Icon(CommunityMaterialIcons.weather_windy, color: Colors.green[800]),
                             label: 'SPD',
                             level: widget.pokemon.stats.defense,
@@ -186,39 +188,59 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
     ),
   ];
 
-  Widget _getStats({required Icon icon, required String label, required int level, required Color color}) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Expanded(
-          flex: 1,
-          child: Row(
-            children: [
-              icon,
-              const SizedBox(width: 4),
-              Text(label, style: TextStyle(color: color)),
-            ],
+  Widget _buildPaddedStats({required Icon icon, required String label, required int level, required Color color}) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Expanded(
+            flex: 1,
+            child: Row(
+              children: [
+                icon,
+                const SizedBox(width: 4),
+                Text(label, style: TextStyle(color: color)),
+              ],
+            ),
           ),
-        ),
-        Expanded(
-          flex: 5,
-          child: LinearProgressIndicator(
-            value: level / pokemonMaxStat,
-            backgroundColor: Color.lerp(color, Colors.white, 0.7),
-            color: color,
+          Expanded(
+            flex: 5,
+            child: LinearProgressIndicator(
+              borderRadius: BorderRadius.circular(8),
+              minHeight: 6,
+              value: level / pokemonMaxStat,
+              backgroundColor: Color.lerp(color, Colors.white, 0.7),
+              color: color,
+            ),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _getLabelValue(String label, String value) {
+  Widget _buildLabelValue(String label, String value) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(label, style: TextStyle(color: _darkerPokemonColor)),
         const SizedBox(width: 4),
         Text(value, style: TextStyle(color: _darkerPokemonColor, fontSize: 18, fontWeight: FontWeight.w500)),
+      ],
+    );
+  }
+
+  Widget _buildLabelIcon(String label) {
+    var darkerPokemonTypeColor = Color.lerp(PokemonColorsService.get(label), Colors.black, 0.6)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        PokemonTypeImageLoader(label, height: 40),
+        const SizedBox(width: 4),
+        Text(label.capitalize(), style: TextStyle(color: darkerPokemonTypeColor)),
       ],
     );
   }

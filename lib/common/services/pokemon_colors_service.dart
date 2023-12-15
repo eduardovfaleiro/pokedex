@@ -1,30 +1,7 @@
 import 'package:flutter/material.dart';
 
-abstract class PokemonColorsService {
-  static List<Color> get(List<String> types) {
-    var colors = <Color>[];
-
-    for (String type in types) {
-      colors.add(_getColor(type));
-    }
-
-    return colors;
-  }
-
-  static Color getMixedColor(List<String> types) {
-    Color? mixedColor;
-
-    for (String type in types) {
-      var color = _getColor(type);
-
-      mixedColor ??= color;
-      mixedColor = Color.alphaBlend(mixedColor, color);
-    }
-
-    return mixedColor as Color;
-  }
-
-  static Color _getColor(String type) {
+class PokemonColorsService {
+  static Color get(String type) {
     switch (type) {
       case 'normal':
         return Colors.brown.shade400;

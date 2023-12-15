@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/pokemon_list_view_model.dart';
 import 'package:pokedex/main.dart';
+import 'package:pokedex/utils/page_state_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/models/pokemon.dart';
@@ -18,6 +19,7 @@ class HomeController {
   HomeController({required this.pokemonListViewModel, required this.pokemonArtViewModel});
 
   final scrollController = ScrollController();
+  final isLoadingMorePokemon = ValueNotifier(false);
 
   Future<void> initialize() async {
     await pokemonListViewModel.initialize();
@@ -27,7 +29,11 @@ class HomeController {
       if (scrollController.position.atEdge) {
         bool isBottom = scrollController.position.pixels != 0;
 
-        if (isBottom) await pokemonListViewModel.loadPokemon();
+        if (isBottom && !isLoadingMorePokemon.value) {
+          isLoadingMorePokemon.value = true;
+          await pokemonListViewModel.loadPokemon();
+          isLoadingMorePokemon.value = false;
+        }
       }
     });
   }

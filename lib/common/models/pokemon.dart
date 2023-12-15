@@ -11,8 +11,8 @@ class Pokemon {
   final String name;
   final List<dynamic> types;
   final Map<String, dynamic> sprite;
-  final int height;
-  final int weight;
+  final int heightDecimeter;
+  final int weightHectogram;
   final PokemonStats stats;
   late final Color mixedColor;
 
@@ -21,12 +21,15 @@ class Pokemon {
     required this.name,
     required this.types,
     required this.sprite,
-    required this.height,
-    required this.weight,
+    required this.heightDecimeter,
+    required this.weightHectogram,
     required this.stats,
   }) {
-    mixedColor = PokemonColorsService.getMixedColor(typesStr);
+    mixedColor = PokemonColorsService.get(typesStr.first);
   }
+
+  double get heightCentimeter => heightDecimeter / 10;
+  double get weightKg => weightHectogram / 10;
 
   List<String> get typesStr {
     return List<String>.from(types.map((e) => e['type']['name']));
@@ -38,8 +41,8 @@ class Pokemon {
       name: map['name'] as String,
       types: map['types'] as List<dynamic>,
       sprite: map['sprites'] as Map<String, dynamic>,
-      height: map['height'] as int,
-      weight: map['weight'] as int,
+      heightDecimeter: map['height'] as int,
+      weightHectogram: map['weight'] as int,
       stats: PokemonStats(
         health: map['stats'][0]['base_stat'] as int,
         attack: map['stats'][1]['base_stat'] as int,
