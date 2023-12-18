@@ -1,1 +1,1 @@
-const pokemonMaxStat = 120;
+const pokemonMaxStat = 255;

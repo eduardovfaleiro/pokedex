@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../utils/const/pokemon_art.dart';
 import '../models/pokemon.dart';
 import 'pokemon_image_loader.dart';
+import 'pokemon_type_image_loader.dart';
 
 class PokemonCard extends StatelessWidget {
   final PokemonArt pokemonArt;
@@ -31,36 +32,56 @@ class PokemonCard extends StatelessWidget {
         );
       },
       child: Ink(
+        width: double.infinity,
         decoration: BoxDecoration(
+          boxShadow: const [
+            BoxShadow(
+              blurRadius: 0,
+              offset: Offset.zero,
+              color: Color.fromARGB(90, 0, 0, 0),
+            )
+          ],
           borderRadius: BorderRadius.circular(8),
-          color: PokemonColorsService.get(pokemon.typesStr.first).withOpacity(0.65),
+          gradient: LinearGradient(
+            colors: [
+              pokemon.mixedColor.withOpacity(0.8),
+              pokemon.mixedColor.withOpacity(1),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
         ),
         padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
-        child: Row(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.only(right: 12, left: 4),
-                child: PokemonImageLoader(pokemon, pokemonArt: pokemonArt, height: 75),
-              ),
+            Padding(
+              padding: const EdgeInsets.only(right: 12, left: 4),
+              child: PokemonImageLoader(pokemon, pokemonArt: pokemonArt, height: 75),
             ),
-            Expanded(
-              flex: 6,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // Text('id: ${pokemon.id}'),
-                  Text(
-                    pokemon.name.capitalize(),
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w500,
-                      fontSize: 18,
-                    ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  pokemon.name.capitalize(),
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                ],
-              ),
+                ),
+                Row(
+                  children: List.generate(pokemon.typesStr.length, (index) {
+                    return PokemonTypeImageLoader(
+                      pokemon.typesStr[index],
+                      height: 15,
+                      color: Color.lerp(pokemon.mixedColor, Colors.white, 0.6)!,
+                    );
+                  }),
+                ),
+              ],
             ),
           ],
         ),

@@ -38,12 +38,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: HomePage(
-        HomeController(
-          pokemonListViewModel: context.read<PokemonListViewModel>(),
-          pokemonArtViewModel: context.read<PokemonArtViewModel>(),
-        ),
-      ),
+      home: const HomePage(),
     );
   }
 }

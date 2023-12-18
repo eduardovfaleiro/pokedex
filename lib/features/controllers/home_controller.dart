@@ -25,6 +25,8 @@ class HomeController {
     await pokemonListViewModel.initialize();
     pokemonArtViewModel.initialize();
 
+    scrollController.removeListener(() {});
+
     scrollController.addListener(() async {
       if (scrollController.position.atEdge) {
         bool isBottom = scrollController.position.pixels != 0;
