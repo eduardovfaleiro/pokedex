@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'dart:math' as math;
 
 class PokeballLoading extends StatefulWidget {
   const PokeballLoading({super.key});
@@ -9,7 +8,6 @@ class PokeballLoading extends StatefulWidget {
 }
 
 class _PokeballLoadingState extends State<PokeballLoading> with TickerProviderStateMixin {
-  double turns = 1;
   late final AnimationController _animationController;
   late final CurvedAnimation _curvedAnimation;
 
@@ -27,19 +25,13 @@ class _PokeballLoadingState extends State<PokeballLoading> with TickerProviderSt
     _animationController.forward();
 
     _animationController.addListener(() async {
-      if (_animationController.isCompleted) {
-        await Future.delayed(const Duration(milliseconds: 1000));
+      if (!_animationController.isCompleted && !_animationController.isDismissed) return;
+      await Future.delayed(const Duration(milliseconds: 1000));
 
-        if (!mounted) return;
-        _animationController.reverse();
-      }
+      if (!mounted) return;
 
-      if (_animationController.isDismissed) {
-        await Future.delayed(const Duration(milliseconds: 1000));
-
-        if (!mounted) return;
-        _animationController.forward();
-      }
+      if (_animationController.isCompleted) return _animationController.reverse();
+      if (_animationController.isDismissed) return _animationController.forward();
     });
   }
 
