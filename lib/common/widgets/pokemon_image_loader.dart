@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
-import '../../utils/const/pokemon_art.dart';
+import '../utils/const/pokemon_art.dart';
 import '../models/pokemon.dart';
 
 class PokemonImageLoader extends StatelessWidget {

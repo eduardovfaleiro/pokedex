@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/common/services/pokemon_colors_service.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
-import 'package:pokedex/features/pages/pokemon_info_page.dart';
-import 'package:pokedex/utils/capitalize_extension.dart';
+import 'package:pokedex/features/pages/pokemon_info/pokemon_info_page.dart';
+import 'package:pokedex/common/utils/capitalize_extension.dart';
 import 'package:provider/provider.dart';
 
-import '../../utils/const/pokemon_art.dart';
+import '../utils/const/pokemon_art.dart';
 import '../models/pokemon.dart';
 import 'pokemon_image_loader.dart';
 import 'pokemon_type_image_loader.dart';

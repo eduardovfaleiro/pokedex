@@ -1,4 +1,4 @@
-import 'package:pokedex/utils/const/pokemon_art.dart';
+import 'package:pokedex/common/utils/const/pokemon_art.dart';
 
 import '../../common/view_models/pokemon_art_view_model.dart';
 

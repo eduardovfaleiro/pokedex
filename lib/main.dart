@@ -7,7 +7,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'common/repositories/pokemon_repository.dart';
 import 'features/pages/home_page.dart';
-import 'utils/const/shared_preferences_instance.dart';
+import 'common/utils/const/shared_preferences_instance.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

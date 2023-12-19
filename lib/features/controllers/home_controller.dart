@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/pokemon_list_view_model.dart';
 import 'package:pokedex/main.dart';
-import 'package:pokedex/utils/page_state_controller.dart';
+import 'package:pokedex/common/utils/page_state_controller.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../common/models/pokemon.dart';
@@ -19,9 +19,14 @@ class HomeController {
   HomeController({required this.pokemonListViewModel, required this.pokemonArtViewModel});
 
   final scrollController = ScrollController();
+  final searchController = TextEditingController();
   final isLoadingMorePokemon = ValueNotifier(false);
 
   Future<void> initialize() async {
+    searchController.addListener(() {
+      searchPokemon(searchController.text);
+    });
+
     await pokemonListViewModel.initialize();
     pokemonArtViewModel.initialize();
 
@@ -33,15 +38,19 @@ class HomeController {
 
         if (isBottom && !isLoadingMorePokemon.value) {
           isLoadingMorePokemon.value = true;
-          await pokemonListViewModel.loadPokemon();
+          await pokemonListViewModel.loadMorePokemon();
           isLoadingMorePokemon.value = false;
         }
       }
     });
   }
 
-  Future<void> loadPokemon() async {
-    await pokemonListViewModel.loadPokemon();
+  Future<void> loadMorePokemon() async {
+    await pokemonListViewModel.loadMorePokemon();
+  }
+
+  void searchPokemon(String args) {
+    pokemonListViewModel.searchPokemon(args);
   }
 
   void switchArt() {

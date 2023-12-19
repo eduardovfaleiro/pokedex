@@ -1,3 +1,5 @@
+import 'package:hive/hive.dart';
+
 class PokemonStats {
   final int health;
   final int attack;
