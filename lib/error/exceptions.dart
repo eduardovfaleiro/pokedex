@@ -1,0 +1,1 @@
+class HiveNotFound implements Exception {}

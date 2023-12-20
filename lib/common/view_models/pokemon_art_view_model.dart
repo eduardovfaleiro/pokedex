@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/common/utils/const/shared_preferences_instance.dart';
 import 'package:pokedex/common/utils/page_state_controller.dart';
 
-import '../utils/const/default_pokemon_art.dart';
+import '../utils/const/consts.dart';
 import '../utils/const/pokemon_art.dart';
 
 class PokemonArtViewModel extends ChangeNotifier with PageStateController {
   late PokemonArt pokemonArt;
 
   void initialize() {
-    String? savedPokemonArt = sharedPreferences.getString('pokemonArt') ?? defaultPokemonArt.name;
+    String? savedPokemonArt = sharedPreferences.getString('pokemonArt') ?? Consts.defaultPokemonArt.name;
 
     switch (savedPokemonArt) {
       case 'dreamWorld':

@@ -6,7 +6,6 @@ import 'package:pokedex/common/widgets/pokemon_image_loader.dart';
 import 'package:pokedex/common/widgets/pokemon_type_image_loader.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
 import 'package:pokedex/common/utils/capitalize_extension.dart';
-import 'package:pokedex/common/utils/const/pokemon_max_stat.dart';
 import 'package:pokedex/features/pages/pokemon_info/components/stat_component.dart';
 
 import '../../../common/models/pokemon.dart';
@@ -28,13 +27,13 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
   void initState() {
     super.initState();
 
-    _darkerPokemonColor = Color.lerp(widget.pokemon.mixedColor, Colors.black, 0.9)!;
+    _darkerPokemonColor = Color.lerp(widget.pokemon.color, Colors.black, 0.9)!;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color.lerp(widget.pokemon.mixedColor, Colors.white, 0.4),
+      backgroundColor: Color.lerp(widget.pokemon.color, Colors.white, 0.4),
       appBar: AppBar(forceMaterialTransparency: true),
       body: SizedBox(
         width: double.infinity,
@@ -48,7 +47,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                   gradient: LinearGradient(
                     colors: [
                       Colors.white,
-                      Color.lerp(widget.pokemon.mixedColor, Colors.white, 0.8)!,
+                      Color.lerp(widget.pokemon.color, Colors.white, 0.8)!,
                     ],
                     begin: Alignment.topCenter,
                     end: Alignment.bottomCenter,

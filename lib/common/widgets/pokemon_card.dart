@@ -44,8 +44,8 @@ class PokemonCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(8),
           gradient: LinearGradient(
             colors: [
-              pokemon.mixedColor.withOpacity(0.8),
-              pokemon.mixedColor.withOpacity(1),
+              pokemon.color.withOpacity(0.8),
+              pokemon.color.withOpacity(1),
             ],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
@@ -77,7 +77,7 @@ class PokemonCard extends StatelessWidget {
                     return PokemonTypeImageLoader(
                       pokemon.typesStr[index],
                       height: 15,
-                      color: Color.lerp(pokemon.mixedColor, Colors.white, 0.6)!,
+                      color: Color.lerp(pokemon.color, Colors.white, 0.6)!,
                     );
                   }),
                 ),

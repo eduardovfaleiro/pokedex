@@ -51,6 +51,17 @@ class _HomePageState extends State<HomePage> {
             color: Colors.red,
           ),
         ),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 8),
+            child: IconButton(
+                tooltip: 'Switch art',
+                onPressed: () {
+                  _homeController.switchArt();
+                },
+                icon: const Icon(CupertinoIcons.restart)),
+          ),
+        ],
       ),
       body: SafeArea(
         child: Consumer<PokemonArtViewModel>(

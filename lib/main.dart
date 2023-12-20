@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/utils/hive_manager.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/pokemon_list_view_model.dart';
 import 'package:pokedex/features/controllers/home_controller.dart';
@@ -13,11 +15,12 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   sharedPreferences = await SharedPreferences.getInstance();
+  await HiveManager.initialize();
 
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => PokemonListViewModel(PokemonRepository())),
+        ChangeNotifierProvider(create: (context) => PokemonListViewModel(PokemonRepository(HivePokemonDataSource()))),
         ChangeNotifierProvider(create: (context) => PokemonArtViewModel()),
       ],
       child: const MyApp(),

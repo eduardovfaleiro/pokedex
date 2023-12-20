@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../common/utils/const/pokemon_max_stat.dart';
+import '../../../../common/utils/const/consts.dart';
 
 class StatComponent extends StatefulWidget {
   final Icon icon;
@@ -60,7 +60,7 @@ class _StatComponentState extends State<StatComponent> {
                     LinearProgressIndicator(
                       borderRadius: BorderRadius.circular(8),
                       minHeight: 16,
-                      value: level / pokemonMaxStat,
+                      value: level / Consts.pokemonMaxStat,
                       backgroundColor: Color.lerp(widget.color, Colors.white, 0.9),
                       color: widget.color,
                     ),
@@ -69,7 +69,7 @@ class _StatComponentState extends State<StatComponent> {
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 4),
                         child: Text(
-                          widget.level >= 48 ? '${widget.level}/$pokemonMaxStat' : widget.level.toString(),
+                          widget.level >= 48 ? '${widget.level}/${Consts.pokemonMaxStat}' : widget.level.toString(),
                           style: const TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,

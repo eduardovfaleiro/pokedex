@@ -15,7 +15,6 @@ class Pokemon {
   final int heightDecimeter;
   final int weightHectogram;
   final PokemonStats stats;
-  late final Color mixedColor;
 
   Pokemon({
     required this.id,
@@ -25,10 +24,9 @@ class Pokemon {
     required this.heightDecimeter,
     required this.weightHectogram,
     required this.stats,
-  }) {
-    mixedColor = PokemonColorsService.get(typesStr.first);
-  }
+  });
 
+  Color get color => PokemonColorsService.get(typesStr.first);
   double get heightCentimeter => heightDecimeter / 10;
   double get weightKg => weightHectogram / 10;
 

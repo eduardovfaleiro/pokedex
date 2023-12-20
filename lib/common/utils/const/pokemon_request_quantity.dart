@@ -1,1 +1,0 @@
-const pokemonRequestQuantity = 20;

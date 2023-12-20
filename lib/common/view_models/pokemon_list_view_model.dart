@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/page_state_controller.dart';
 
-import '../utils/const/pokemon_request_quantity.dart';
+import '../utils/const/consts.dart';
 import '../models/pokemon.dart';
 
 class PokemonListViewModel extends ChangeNotifier {
@@ -30,14 +30,13 @@ class PokemonListViewModel extends ChangeNotifier {
   }
 
   Future<void> _loadPokemon() async {
-    // int cachedPokemonLength = cachedPokemon.length;
+    int cachedPokemonLength = cachedPokemon.length;
 
-    // for (int i = cachedPokemonLength + 1; i < pokemonRequestQuantity + cachedPokemonLength; i++) {
-    //   cachedPokemon.add(await _pokemonRepository.getPokemonById(i));
-    // }
+    for (int i = cachedPokemonLength + 1; i < Consts.pokemonRequestQuantity + cachedPokemonLength; i++) {
+      cachedPokemon.add(await _pokemonRepository.getPokemonById(i));
+    }
 
-    // pokemon = [...cachedPokemon];
-    pokemon = [];
+    pokemon = [...cachedPokemon];
   }
 
   Future<void> loadMorePokemon() async {
