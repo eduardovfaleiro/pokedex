@@ -14,5 +14,6 @@ class HiveManager {
     Hive.registerAdapter(HivePokemonStatsAdapter());
 
     await Hive.openBox<HivePokemon>(HiveBoxes.pokemon);
+    await Hive.openBox<HivePokemon>(HiveBoxes.pokemonNameUrl);
   }
 }

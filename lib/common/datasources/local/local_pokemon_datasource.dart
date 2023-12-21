@@ -4,6 +4,7 @@ import 'package:pokedex/common/utils/hive_mappers.dart';
 import 'package:pokedex/error/exceptions.dart';
 
 import '../../models/pokemon.dart';
+import '../../utils/const/consts.dart';
 import '../../utils/const/hive_boxes.dart';
 import 'generated/hive_pokemon.dart';
 import 'local_pokemon_datasource.dart';
@@ -16,11 +17,12 @@ abstract class LocalPokemonDataSource {
 }
 
 class HivePokemonDataSource implements LocalPokemonDataSource {
-  final box = Hive.box<HivePokemon>(HiveBoxes.pokemon);
+  final pokemonBox = Hive.box<HivePokemon>(HiveBoxes.pokemon);
+  final pokemonNameUrlBox = Hive.box<HivePokemon>(HiveBoxes.pokemonNameUrl);
 
   @override
   Future<void> cache(Pokemon pokemon) async {
-    await box.put(pokemon.id, pokemon.toHiveModel());
+    await pokemonBox.put(pokemon.id, pokemon.toHiveModel());
   }
 
   @override
@@ -30,14 +32,14 @@ class HivePokemonDataSource implements LocalPokemonDataSource {
 
   @override
   Future<bool> existsId(int pokemonId) async {
-    return box.containsKey(pokemonId);
+    return pokemonBox.containsKey(pokemonId);
   }
 
   @override
   Future<Pokemon> getId(int pokemonId) async {
-    var hivePokemon = box.get(pokemonId);
-
+    var hivePokemon = pokemonBox.get(pokemonId);
     if (hivePokemon == null) throw HiveNotFound();
+
     return hivePokemon.toEntity();
   }
 }

@@ -1,48 +1,57 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
 import 'package:flutter/material.dart';
+import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
-import 'package:pokedex/common/view_models/pokemon_list_view_model.dart';
+import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
+
+import '../../common/models/pokemon.dart';
 
 class HomeController {
-  final PokemonListViewModel pokemonListViewModel;
+  final PokemonRepository pokemonRepository;
   final PokemonArtViewModel pokemonArtViewModel;
+  final SearchPokemonViewModel searchPokemonViewModel;
 
-  HomeController({required this.pokemonListViewModel, required this.pokemonArtViewModel});
+  HomeController({
+    required this.pokemonRepository,
+    required this.pokemonArtViewModel,
+    required this.searchPokemonViewModel,
+  });
 
   final scrollController = ScrollController();
-  final searchController = TextEditingController();
   final isLoadingMorePokemon = ValueNotifier(false);
 
   Future<void> initialize() async {
-    searchController.addListener(() {
-      searchPokemon(searchController.text);
-    });
-
-    await pokemonListViewModel.initialize();
+    searchPokemonViewModel.initialize();
     pokemonArtViewModel.initialize();
 
     scrollController.removeListener(() {});
+
+    int hitBottomCount = 0;
 
     scrollController.addListener(() async {
       if (scrollController.position.atEdge) {
         bool isBottom = scrollController.position.pixels != 0;
 
         if (isBottom && !isLoadingMorePokemon.value) {
-          isLoadingMorePokemon.value = true;
-          await pokemonListViewModel.loadMorePokemon();
-          isLoadingMorePokemon.value = false;
+          if (hitBottomCount >= 3) {
+            isLoadingMorePokemon.value = true;
+            await Future.delayed(const Duration(seconds: 2));
+            isLoadingMorePokemon.value = false;
+          }
+
+          hitBottomCount++;
         }
       }
     });
   }
 
-  Future<void> loadMorePokemon() async {
-    await pokemonListViewModel.loadMorePokemon();
+  Future<Pokemon> getPokemonId(int pokemonId) {
+    return pokemonRepository.getPokemonId(pokemonId);
   }
 
-  void searchPokemon(String args) {
-    pokemonListViewModel.searchPokemon(args);
+  Future<List<Pokemon>> searchPokemon() {
+    return searchPokemonViewModel.searchPokemon();
   }
 
   void switchArt() {
