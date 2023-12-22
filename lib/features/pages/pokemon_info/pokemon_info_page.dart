@@ -67,7 +67,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     PokemonImageLoader(
-                      widget.pokemon,
+                      widget.pokemon.sprite,
                       pokemonArt: widget.pokemonInfoController.getPokemonArt(),
                       height: 160,
                     ),

@@ -1,24 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
+import '../utils/const/consts.dart';
 import '../utils/const/pokemon_art.dart';
 import '../models/pokemon.dart';
 
 class PokemonImageLoader extends StatelessWidget {
   final double height;
-  final Pokemon pokemon;
+  final Map<String, dynamic> pokemonSprite;
   final PokemonArt pokemonArt;
 
-  const PokemonImageLoader(this.pokemon, {super.key, required this.pokemonArt, required this.height});
+  const PokemonImageLoader(this.pokemonSprite, {super.key, required this.pokemonArt, required this.height});
 
   String get _source {
     switch (pokemonArt) {
-      case PokemonArt.officialArtwork:
-        return pokemon.sprite['other']['home']['front_default'];
-      case PokemonArt.dreamWorld:
-        return pokemon.sprite['other']['dream_world']['front_default'];
       case PokemonArt.home:
-        return pokemon.sprite['other']['official-artwork']['front_default'];
+        return pokemonSprite['other']['home']['front_default'] ?? Consts.defaultPokemonArtIfNull;
+      case PokemonArt.dreamWorld:
+        return pokemonSprite['other']['dream_world']['front_default'] ?? Consts.defaultPokemonArtIfNull;
+      case PokemonArt.officialArtwork:
+        return pokemonSprite['other']['official-artwork']['front_default'];
     }
   }
 

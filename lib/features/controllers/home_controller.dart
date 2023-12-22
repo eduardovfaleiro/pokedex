@@ -33,17 +33,21 @@ class HomeController {
       if (scrollController.position.atEdge) {
         bool isBottom = scrollController.position.pixels != 0;
 
-        if (isBottom && !isLoadingMorePokemon.value) {
+        if (isBottom) {
+          hitBottomCount++;
+
           if (hitBottomCount >= 3) {
             isLoadingMorePokemon.value = true;
             await Future.delayed(const Duration(seconds: 2));
             isLoadingMorePokemon.value = false;
           }
-
-          hitBottomCount++;
         }
       }
     });
+  }
+
+  Future<int> getPokemonCount() {
+    return pokemonRepository.getPokemonCount();
   }
 
   Future<Pokemon> getPokemonId(int pokemonId) {

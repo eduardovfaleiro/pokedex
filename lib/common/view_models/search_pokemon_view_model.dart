@@ -2,7 +2,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
-import 'package:pokedex/common/utils/page_state_controller.dart';
 
 import '../models/pokemon.dart';
 
@@ -24,6 +23,6 @@ class SearchPokemonViewModel extends ChangeNotifier {
   }
 
   Future<List<Pokemon>> searchPokemon() async {
-    return pokemonRepository.searchPokemon(searchController.text);
+    return pokemonRepository.searchPokemon(searchController.text.toLowerCase());
   }
 }

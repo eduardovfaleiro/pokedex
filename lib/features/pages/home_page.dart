@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/datasources/local/local_pokemon_object_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
@@ -27,7 +27,7 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _homeController = HomeController(
-      pokemonRepository: PokemonRepository(HivePokemonDataSource()),
+      pokemonRepository: PokemonRepository(HivePokemonObjectDataSource()),
       pokemonArtViewModel: context.read<PokemonArtViewModel>(),
       searchPokemonViewModel: context.read<SearchPokemonViewModel>(),
     );
@@ -113,34 +113,44 @@ class _HomePageState extends State<HomePage> {
                           );
                         }
 
-                        return GridView.builder(
-                          controller: _homeController.scrollController,
-                          // itemCount: shownPokemon.length,
-                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            childAspectRatio: 1.35,
-                          ),
-                          padding: EdgeInsets.only(
-                            bottom: MediaQuery.of(context).size.height * .1,
-                            top: MediaQuery.of(context).size.height * .085,
-                            left: 6,
-                            right: 6,
-                          ),
+                        return FutureBuilder(
+                          future: _homeController.getPokemonCount(),
+                          builder: (context, snapshot) {
+                            if (snapshot.connectionState == ConnectionState.waiting) {
+                              return const Center(child: PokeballLoading());
+                            }
 
-                          itemBuilder: (context, index) {
-                            return FutureBuilder(
-                              future: _homeController.getPokemonId(index + 1),
-                              builder: (context, snapshot) {
-                                if (snapshot.connectionState == ConnectionState.waiting) {
-                                  return const PokeballLoading();
-                                }
+                            final pokemonCount = snapshot.data as int;
 
-                                return Padding(
-                                  padding: const EdgeInsets.all(6),
-                                  child: PokemonCard(
-                                    snapshot.data as Pokemon,
-                                    pokemonArt: pokemonArtViewModel.pokemonArt,
-                                  ),
+                            return GridView.builder(
+                              controller: _homeController.scrollController,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 1.35,
+                              ),
+                              itemCount: pokemonCount,
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.height * .1,
+                                top: MediaQuery.of(context).size.height * .085,
+                                left: 6,
+                                right: 6,
+                              ),
+                              itemBuilder: (context, index) {
+                                return FutureBuilder(
+                                  future: _homeController.getPokemonId(index + 1),
+                                  builder: (context, snapshot) {
+                                    if (snapshot.connectionState == ConnectionState.waiting) {
+                                      return const PokeballLoading();
+                                    }
+
+                                    return Padding(
+                                      padding: const EdgeInsets.all(6),
+                                      child: PokemonCard(
+                                        snapshot.data as Pokemon,
+                                        pokemonArt: pokemonArtViewModel.pokemonArt,
+                                      ),
+                                    );
+                                  },
                                 );
                               },
                             );

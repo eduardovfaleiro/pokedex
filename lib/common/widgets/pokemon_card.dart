@@ -58,18 +58,26 @@ class PokemonCard extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(right: 12, left: 4),
-              child: PokemonImageLoader(pokemon, pokemonArt: pokemonArt, height: 75),
+              child: PokemonImageLoader(pokemon.sprite, pokemonArt: pokemonArt, height: 75),
             ),
             const SizedBox(height: 8),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  pokemon.name.capitalize(),
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 20,
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(
+                        pokemon.name.capitalize(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
                   ),
                 ),
                 Row(
