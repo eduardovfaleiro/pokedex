@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/services/pokemon_colors_service.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
 import 'package:pokedex/features/pages/pokemon_info/pokemon_info_page.dart';

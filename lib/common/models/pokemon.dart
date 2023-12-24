@@ -5,13 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../services/pokemon_colors_service.dart';
+import 'pokemon_sprite.dart';
 import 'pokemon_stats.dart';
 
 class Pokemon {
   final int id;
   final String name;
   final List<dynamic> types;
-  final Map<String, dynamic> sprite;
+  final List<PokemonSprite> sprites;
   final int heightDecimeter;
   final int weightHectogram;
   final PokemonStats stats;
@@ -20,7 +21,7 @@ class Pokemon {
     required this.id,
     required this.name,
     required this.types,
-    required this.sprite,
+    required this.sprites,
     required this.heightDecimeter,
     required this.weightHectogram,
     required this.stats,
@@ -39,7 +40,7 @@ class Pokemon {
       id: map['id'] as int,
       name: map['name'] as String,
       types: map['types'] as List<dynamic>,
-      sprite: map['sprites'] as Map<String, dynamic>,
+      sprites: map['sprites'] as List<PokemonSprite>,
       heightDecimeter: map['height'] as int,
       weightHectogram: map['weight'] as int,
       stats: PokemonStats(

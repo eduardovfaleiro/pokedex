@@ -46,15 +46,11 @@ class HomeController {
     });
   }
 
-  Future<int> getPokemonCount() {
-    return pokemonRepository.getPokemonCount();
-  }
-
   Future<Pokemon> getPokemonId(int pokemonId) {
     return pokemonRepository.getPokemonId(pokemonId);
   }
 
-  Future<List<Pokemon>> searchPokemon() {
+  Future<List<int>> searchPokemon() {
     return searchPokemonViewModel.searchPokemon();
   }
 

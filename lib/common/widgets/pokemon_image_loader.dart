@@ -15,9 +15,11 @@ class PokemonImageLoader extends StatelessWidget {
   String get _source {
     switch (pokemonArt) {
       case PokemonArt.home:
-        return pokemonSprite['other']['home']['front_default'] ?? Consts.defaultPokemonArtIfNull;
+        return pokemonSprite['other']['home']['front_default'] ??
+            pokemonSprite['other']['official-artwork']['front_default'];
       case PokemonArt.dreamWorld:
-        return pokemonSprite['other']['dream_world']['front_default'] ?? Consts.defaultPokemonArtIfNull;
+        return pokemonSprite['other']['dream_world']['front_default'] ??
+            pokemonSprite['other']['official-artwork']['front_default'];
       case PokemonArt.officialArtwork:
         return pokemonSprite['other']['official-artwork']['front_default'];
     }

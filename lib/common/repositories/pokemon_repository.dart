@@ -1,63 +1,82 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:http/http.dart' as http;
-import 'package:pokedex/common/datasources/local/local_pokemon_object_datasource.dart';
+import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
 
 import '../models/pokemon.dart';
 import '../utils/const/poke_api.dart';
 
 class PokemonRepository {
-  final LocalPokemonObjectDataSource dataSource;
+  final LocalPokemonDataSource dataSource;
 
   PokemonRepository(this.dataSource);
 
   Future<Pokemon> getPokemonId(int id) async {
-    if (await dataSource.existsId(id)) {
-      return dataSource.getId(id);
-    }
+    var localPokemon = await dataSource.getId(id);
+    if (localPokemon != null) return localPokemon;
 
     var response = await http.get(Uri.parse('${PokeApi.pokemon}/$id'));
+
     var pokemon = Pokemon.fromJson(response.body);
     await dataSource.cache(pokemon);
 
     return pokemon;
   }
 
-  Future<List<Pokemon>> searchPokemon(String args) async {
-    var response = await http.get(Uri.parse('${PokeApi.pokemon}/?limit=9999&offset=0'));
+  Future<List<int>> searchPokemon(String args) async {
+    final pokemonUrls = await _getPokemonUrlList();
 
-    final pokemonData = Map<String, dynamic>.from(jsonDecode(response.body));
-    final pokemonNameUrlList = List<Map<String, dynamic>>.from(pokemonData['results']);
+    var filteredPokemonIds = <int>[];
 
-    final pokemonList = <Pokemon>[];
-
-    for (int i = 0; i < 1025; i++) {
-      if (pokemonNameUrlList[i]['name'].contains(args)) {
-        pokemonList.add(await getPokemonId(i + 1));
+    for (int i = 0; i < pokemonUrls.length; i++) {
+      if (pokemonUrls[i]['name']!.contains(args)) {
+        filteredPokemonIds.add(int.parse(pokemonUrls[i]['url']!.split('/')[6]));
       }
     }
 
-    int maxIndex = pokemonData['count'];
-    int id;
+    return filteredPokemonIds;
 
-    for (int i = 1025; i < maxIndex; i++) {
-      id = 10000 + i - 1024;
+    // final pokemonList = <Pokemon>[];
 
-      if (pokemonNameUrlList[i]['name'].contains(args)) {
-        pokemonList.add(await getPokemonId(id));
-      }
-    }
+    // for (int i = 0; i < 1025; i++) {
+    //   if (pokemonUrlList[i]['name'].contains(args)) {
+    //     pokemonList.add(await getPokemonId(i + 1));
+    //   }
+    // }
 
-    return pokemonList;
+    // int maxIndex = pokemonData['count'];
+    // int id;
+
+    // for (int i = 1025; i < maxIndex; i++) {
+    //   id = 10000 + i - 1024;
+
+    //   if (pokemonUrlList[i]['name'].contains(args)) {
+    //     pokemonList.add(await getPokemonId(id));
+    //   }
+    // }
+
+    // return pokemonList;
   }
 
-  Future<int> getPokemonCount() async {
+  Future<List<Map<dynamic, dynamic>>> _getPokemonUrlList() async {
+    var localPokemonUrls = await dataSource.getPokemonUrlList();
+    if (localPokemonUrls.isNotEmpty) return localPokemonUrls;
+
     try {
       var response = await http.get(Uri.parse('${PokeApi.pokemon}/?limit=9999&offset=0'));
+      var pokemonUrlList = List<Map<dynamic, dynamic>>.from(jsonDecode(response.body)['results']);
 
-      return jsonDecode(response.body)['count'];
+      await dataSource.cachePokemonUrlList(pokemonUrlList);
+      return pokemonUrlList;
     } on http.ClientException {
-      return dataSource.getPokemonCount();
+      return [];
+    } on SocketException {
+      print('');
+    } catch (e) {
+      print('');
     }
+
+    return [];
   }
 }

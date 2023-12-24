@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/datasources/local/local_pokemon_object_datasource.dart';
+import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
@@ -27,7 +27,9 @@ class _HomePageState extends State<HomePage> {
     super.initState();
 
     _homeController = HomeController(
-      pokemonRepository: PokemonRepository(HivePokemonObjectDataSource()),
+      pokemonRepository: PokemonRepository(
+        HivePokemonDataSource(),
+      ),
       pokemonArtViewModel: context.read<PokemonArtViewModel>(),
       searchPokemonViewModel: context.read<SearchPokemonViewModel>(),
     );
@@ -76,51 +78,15 @@ class _HomePageState extends State<HomePage> {
                   child: Scrollbar(
                     child: Consumer<SearchPokemonViewModel>(
                       builder: (context, searchPokemonViewModel, _) {
-                        if (searchPokemonViewModel.isSearchingPokemon) {
-                          return FutureBuilder(
-                            future: _homeController.searchPokemon(),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState == ConnectionState.waiting) {
-                                return const Center(child: PokeballLoading());
-                              }
-
-                              final searchedPokemon = snapshot.data!;
-
-                              return GridView.builder(
-                                controller: _homeController.scrollController,
-                                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                  crossAxisCount: 2,
-                                  childAspectRatio: 1.35,
-                                ),
-                                itemCount: searchedPokemon.length,
-                                padding: EdgeInsets.only(
-                                  bottom: MediaQuery.of(context).size.height * .1,
-                                  top: MediaQuery.of(context).size.height * .085,
-                                  left: 6,
-                                  right: 6,
-                                ),
-                                itemBuilder: (context, index) {
-                                  return Padding(
-                                    padding: const EdgeInsets.all(6),
-                                    child: PokemonCard(
-                                      searchedPokemon[index],
-                                      pokemonArt: pokemonArtViewModel.pokemonArt,
-                                    ),
-                                  );
-                                },
-                              );
-                            },
-                          );
-                        }
-
+                        // if (searchPokemonViewModel.isSearchingPokemon) {
                         return FutureBuilder(
-                          future: _homeController.getPokemonCount(),
+                          future: _homeController.searchPokemon(),
                           builder: (context, snapshot) {
                             if (snapshot.connectionState == ConnectionState.waiting) {
                               return const Center(child: PokeballLoading());
                             }
 
-                            final pokemonCount = snapshot.data as int;
+                            final searchedPokemon = snapshot.data!;
 
                             return GridView.builder(
                               controller: _homeController.scrollController,
@@ -128,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisCount: 2,
                                 childAspectRatio: 1.35,
                               ),
-                              itemCount: pokemonCount,
+                              itemCount: searchedPokemon.length,
                               padding: EdgeInsets.only(
                                 bottom: MediaQuery.of(context).size.height * .1,
                                 top: MediaQuery.of(context).size.height * .085,
@@ -137,10 +103,10 @@ class _HomePageState extends State<HomePage> {
                               ),
                               itemBuilder: (context, index) {
                                 return FutureBuilder(
-                                  future: _homeController.getPokemonId(index + 1),
+                                  future: _homeController.getPokemonId(searchedPokemon[index]),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
-                                      return const PokeballLoading();
+                                      return const Center(child: PokeballLoading());
                                     }
 
                                     return Padding(
@@ -156,6 +122,39 @@ class _HomePageState extends State<HomePage> {
                             );
                           },
                         );
+                        // }
+
+                        // return GridView.builder(
+                        //   controller: _homeController.scrollController,
+                        //   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        //     crossAxisCount: 2,
+                        //     childAspectRatio: 1.35,
+                        //   ),
+                        //   padding: EdgeInsets.only(
+                        //     bottom: MediaQuery.of(context).size.height * .1,
+                        //     top: MediaQuery.of(context).size.height * .085,
+                        //     left: 6,
+                        //     right: 6,
+                        //   ),
+                        //   itemBuilder: (context, index) {
+                        //     return FutureBuilder(
+                        //       future: _homeController.getPokemonId(index + 1),
+                        //       builder: (context, snapshot) {
+                        //         if (snapshot.connectionState == ConnectionState.waiting) {
+                        //           return const PokeballLoading();
+                        //         }
+
+                        //         return Padding(
+                        //           padding: const EdgeInsets.all(6),
+                        //           child: PokemonCard(
+                        //             snapshot.data as Pokemon,
+                        //             pokemonArt: pokemonArtViewModel.pokemonArt,
+                        //           ),
+                        //         );
+                        //       },
+                        //     );
+                        //   },
+                        // );
                       },
                     ),
                   ),

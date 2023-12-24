@@ -1,8 +1,10 @@
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:pokedex/common/datasources/local/models/hive_pokemon_sprite.dart';
+import 'package:pokedex/common/models/pokemon_sprite.dart';
 import 'package:pokedex/common/utils/const/hive_boxes.dart';
 
-import '../../datasources/local/generated/hive_pokemon.dart';
-import '../../datasources/local/generated/hive_pokemon_stats.dart';
+import '../../datasources/local/models/hive_pokemon.dart';
+import '../../datasources/local/models/hive_pokemon_stats.dart';
 import '../../models/pokemon.dart';
 import '../../models/pokemon_stats.dart';
 
@@ -11,7 +13,7 @@ extension PokemonExtension on Pokemon {
     return HivePokemon(
       id: id,
       name: name,
-      sprite: sprite,
+      sprites: List.from(sprites.map((sprite) => sprite.toHiveModel())),
       stats: stats.toHiveModel(),
       types: types,
       weightHectogram: weightHectogram,
@@ -30,6 +32,12 @@ extension PokemonStatsExtension on PokemonStats {
       specialDefense: specialDefense,
       speed: speed,
     );
+  }
+}
+
+extension PokemonSpriteExtension on PokemonSprite {
+  HivePokemonSprite toHiveModel() {
+    return HivePokemonSprite(name, bytes);
   }
 }
 
@@ -52,7 +60,7 @@ extension HivePokemonExtension on HivePokemon {
       id: id,
       name: name,
       types: types,
-      sprite: sprite,
+      sprites: List.from(sprites.map((sprite) => sprite.toHiveModel())),
       heightDecimeter: heightDecimeter,
       weightHectogram: weightHectogram,
       stats: stats.toEntity(),
