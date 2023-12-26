@@ -2,10 +2,11 @@ import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/common/services/pokemon_colors_service.dart';
+import 'package:pokedex/common/utils/extensions/get_file_type_extension.dart';
 import 'package:pokedex/common/widgets/pokemon_image_loader.dart';
 import 'package:pokedex/common/widgets/pokemon_type_image_loader.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
-import 'package:pokedex/common/utils/capitalize_extension.dart';
+import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
 import 'package:pokedex/features/pages/pokemon_info/components/stat_component.dart';
 
 import '../../../common/models/pokemon.dart';
@@ -67,7 +68,8 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     PokemonImageLoader(
-                      widget.pokemon.sprite,
+                      widget.pokemon.id,
+                      widget.pokemon.images,
                       pokemonArt: widget.pokemonInfoController.getPokemonArt(),
                       height: 160,
                     ),

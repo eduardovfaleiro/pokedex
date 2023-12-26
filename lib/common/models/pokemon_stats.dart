@@ -19,4 +19,15 @@ class PokemonStats {
     required this.specialDefense,
     required this.speed,
   });
+
+  factory PokemonStats.fromMap(Map<String, dynamic> map) {
+    return PokemonStats(
+      health: map[0]['base_stat'] as int,
+      attack: map[1]['base_stat'] as int,
+      defense: map[2]['base_stat'] as int,
+      specialAttack: map[3]['base_stat'] as int,
+      specialDefense: map[4]['base_stat'] as int,
+      speed: map[5]['base_stat'] as int,
+    );
+  }
 }

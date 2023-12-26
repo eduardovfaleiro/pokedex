@@ -20,7 +20,7 @@ class HivePokemonAdapter extends TypeAdapter<HivePokemon> {
       id: fields[0] as int,
       name: fields[1] as String,
       types: (fields[2] as List).cast<dynamic>(),
-      sprites: (fields[3] as List).cast<PokemonSprite>(),
+      images: (fields[3] as List).cast<HivePokemonImageUrl>(),
       heightDecimeter: fields[4] as int,
       weightHectogram: fields[5] as int,
       stats: fields[6] as HivePokemonStats,
@@ -38,7 +38,7 @@ class HivePokemonAdapter extends TypeAdapter<HivePokemon> {
       ..writeByte(2)
       ..write(obj.types)
       ..writeByte(3)
-      ..write(obj.sprites)
+      ..write(obj.images)
       ..writeByte(4)
       ..write(obj.heightDecimeter)
       ..writeByte(5)

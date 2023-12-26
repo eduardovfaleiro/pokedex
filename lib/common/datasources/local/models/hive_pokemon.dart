@@ -2,13 +2,10 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
-import 'package:pokedex/common/models/pokemon_sprite.dart';
+import 'package:pokedex/common/datasources/local/models/hive_pokemon_image_url.dart';
 
-import '../../../services/pokemon_colors_service.dart';
 import 'hive_pokemon_stats.dart';
-import 'package:pokedex/common/models/pokemon.dart' as g_pokemon;
 
 part 'hive_pokemon.g.dart';
 
@@ -21,7 +18,7 @@ class HivePokemon extends HiveObject {
   @HiveField(2)
   final List<dynamic> types;
   @HiveField(3)
-  final List<PokemonSprite> sprites;
+  final List<HivePokemonImageUrl> images;
   @HiveField(4)
   final int heightDecimeter;
   @HiveField(5)
@@ -33,7 +30,7 @@ class HivePokemon extends HiveObject {
     required this.id,
     required this.name,
     required this.types,
-    required this.sprites,
+    required this.images,
     required this.heightDecimeter,
     required this.weightHectogram,
     required this.stats,

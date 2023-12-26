@@ -1,18 +1,19 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 
 import '../services/pokemon_colors_service.dart';
-import 'pokemon_sprite.dart';
+import 'pokemon_image_url.dart';
 import 'pokemon_stats.dart';
 
 class Pokemon {
   final int id;
   final String name;
   final List<dynamic> types;
-  final List<PokemonSprite> sprites;
+  final List<PokemonImageUrl> images;
   final int heightDecimeter;
   final int weightHectogram;
   final PokemonStats stats;
@@ -21,7 +22,7 @@ class Pokemon {
     required this.id,
     required this.name,
     required this.types,
-    required this.sprites,
+    required this.images,
     required this.heightDecimeter,
     required this.weightHectogram,
     required this.stats,
@@ -36,11 +37,17 @@ class Pokemon {
   }
 
   factory Pokemon.fromMap(Map<String, dynamic> map) {
+    final sprites = map['sprites']['other'];
+
     return Pokemon(
       id: map['id'] as int,
       name: map['name'] as String,
       types: map['types'] as List<dynamic>,
-      sprites: map['sprites'] as List<PokemonSprite>,
+      images: [
+        PokemonImageUrl(sprites['dream_world']['front_default'], art: 'dreamWorld'),
+        PokemonImageUrl(sprites['official-artwork']['front_default'], art: 'officialArtwork'),
+        PokemonImageUrl(sprites['home']['front_default'], art: 'home'),
+      ],
       heightDecimeter: map['height'] as int,
       weightHectogram: map['weight'] as int,
       stats: PokemonStats(

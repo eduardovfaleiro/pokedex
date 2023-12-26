@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/common/utils/extensions/get_file_type_extension.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
 import 'package:pokedex/features/pages/pokemon_info/pokemon_info_page.dart';
-import 'package:pokedex/common/utils/capitalize_extension.dart';
+import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
 import 'package:provider/provider.dart';
 
 import '../utils/const/pokemon_art.dart';
@@ -57,7 +58,12 @@ class PokemonCard extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.only(right: 12, left: 4),
-              child: PokemonImageLoader(pokemon.sprite, pokemonArt: pokemonArt, height: 75),
+              child: PokemonImageLoader(
+                pokemon.id,
+                pokemon.images,
+                height: 75,
+                pokemonArt: pokemonArt,
+              ),
             ),
             const SizedBox(height: 8),
             Row(

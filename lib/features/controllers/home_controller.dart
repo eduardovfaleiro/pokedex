@@ -6,6 +6,7 @@ import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
 
 import '../../common/models/pokemon.dart';
+import '../../common/utils/const/pokemon_art.dart';
 
 class HomeController {
   final PokemonRepository pokemonRepository;
@@ -46,8 +47,8 @@ class HomeController {
     });
   }
 
-  Future<Pokemon> getPokemonId(int pokemonId) {
-    return pokemonRepository.getPokemonId(pokemonId);
+  Future<Pokemon> getPokemonId(int pokemonId, {required PokemonArt art}) {
+    return pokemonRepository.getPokemonId(pokemonId, art: art);
   }
 
   Future<List<int>> searchPokemon() {

@@ -28,15 +28,4 @@ class HivePokemonStats extends HiveObject {
     required this.specialDefense,
     required this.speed,
   });
-
-  factory HivePokemonStats.fromMap(Map<String, dynamic> map) {
-    return HivePokemonStats(
-      health: map['health'] as int,
-      attack: map['attack'] as int,
-      defense: map['defense'] as int,
-      specialAttack: map['specialAttack'] as int,
-      specialDefense: map['specialDefense'] as int,
-      speed: map['speed'] as int,
-    );
-  }
 }

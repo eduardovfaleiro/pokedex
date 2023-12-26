@@ -103,7 +103,10 @@ class _HomePageState extends State<HomePage> {
                               ),
                               itemBuilder: (context, index) {
                                 return FutureBuilder(
-                                  future: _homeController.getPokemonId(searchedPokemon[index]),
+                                  future: _homeController.getPokemonId(
+                                    searchedPokemon[index],
+                                    art: _homeController.pokemonArtViewModel.pokemonArt,
+                                  ),
                                   builder: (context, snapshot) {
                                     if (snapshot.connectionState == ConnectionState.waiting) {
                                       return const Center(child: PokeballLoading());

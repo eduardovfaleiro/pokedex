@@ -1,27 +1,51 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
 import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/models/pokemon_image_url.dart';
 
 import '../models/pokemon.dart';
 import '../utils/const/poke_api.dart';
+import '../utils/const/pokemon_art.dart';
 
 class PokemonRepository {
   final LocalPokemonDataSource dataSource;
 
   PokemonRepository(this.dataSource);
 
-  Future<Pokemon> getPokemonId(int id) async {
+  Future<Pokemon> getPokemonId(int id, {required PokemonArt art}) async {
     var localPokemon = await dataSource.getId(id);
     if (localPokemon != null) return localPokemon;
 
     var response = await http.get(Uri.parse('${PokeApi.pokemon}/$id'));
+    var json = jsonDecode(response.body) as Map<String, dynamic>;
 
-    var pokemon = Pokemon.fromJson(response.body);
+    var pokemon = Pokemon.fromMap(json);
+
+    for (var imageUrl in pokemon.images) {
+      final imageBytes = await _getPokemonImageUrl(imageUrl.url);
+      await dataSource.cacheImage(id, imageBytes, pokemonArt: art);
+    }
+
     await dataSource.cache(pokemon);
 
     return pokemon;
+  }
+
+  Future<Uint8List> _getPokemonImageUrl(String url) async {
+    var response = await http.get(Uri.parse(url));
+
+    return response.bodyBytes;
+  }
+
+  Future<Uint8List> getPokemonImage(int id, PokemonImageUrl imageUrl, {required PokemonArt pokemonArt}) async {
+    var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
+    if (localPokemonImage != null) return localPokemonImage;
+
+    var imageBytes = await _getPokemonImageUrl(imageUrl.url);
+    return imageBytes;
   }
 
   Future<List<int>> searchPokemon(String args) async {
@@ -36,30 +60,9 @@ class PokemonRepository {
     }
 
     return filteredPokemonIds;
-
-    // final pokemonList = <Pokemon>[];
-
-    // for (int i = 0; i < 1025; i++) {
-    //   if (pokemonUrlList[i]['name'].contains(args)) {
-    //     pokemonList.add(await getPokemonId(i + 1));
-    //   }
-    // }
-
-    // int maxIndex = pokemonData['count'];
-    // int id;
-
-    // for (int i = 1025; i < maxIndex; i++) {
-    //   id = 10000 + i - 1024;
-
-    //   if (pokemonUrlList[i]['name'].contains(args)) {
-    //     pokemonList.add(await getPokemonId(id));
-    //   }
-    // }
-
-    // return pokemonList;
   }
 
-  Future<List<Map<dynamic, dynamic>>> _getPokemonUrlList() async {
+  Future<List<Map>> _getPokemonUrlList() async {
     var localPokemonUrls = await dataSource.getPokemonUrlList();
     if (localPokemonUrls.isNotEmpty) return localPokemonUrls;
 
@@ -71,12 +74,6 @@ class PokemonRepository {
       return pokemonUrlList;
     } on http.ClientException {
       return [];
-    } on SocketException {
-      print('');
-    } catch (e) {
-      print('');
     }
-
-    return [];
   }
 }
