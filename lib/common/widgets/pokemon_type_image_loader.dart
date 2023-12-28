@@ -24,31 +24,31 @@ class PokemonTypeImageLoader extends StatelessWidget {
       case 'electric':
         return Icon(CommunityMaterialIcons.lightning_bolt, color: color);
       case 'ice':
-        return Icon(CommunityMaterialIcons.ice_pop, color: color);
+        return Icon(Icons.ac_unit, color: color);
       case 'fighting':
         return Icon(CommunityMaterialIcons.sword_cross, color: color);
       case 'poison':
-        return Icon(CommunityMaterialIcons.flask_round_bottom, color: color);
+        return Image.asset('assets/images/poison.png', cacheWidth: 20, color: color);
       case 'ground':
-        return Icon(CommunityMaterialIcons.earth, color: color);
+        return Image.asset('assets/images/ground.png', cacheWidth: 20, color: color);
       case 'flying':
-        return Icon(CommunityMaterialIcons.bird, color: color);
+        return Image.asset('assets/images/flying.png', cacheWidth: 20, color: color);
       case 'psychic':
-        return Icon(CommunityMaterialIcons.brain, color: color);
+        return Image.asset('assets/images/psychic.png', cacheWidth: 20, color: color);
       case 'bug':
-        return Icon(CommunityMaterialIcons.bug, color: color);
+        return Image.asset('assets/images/bug.png', cacheWidth: 20, color: color);
       case 'rock':
-        return Icon(Icons.star_border_purple500, color: color);
+        return Image.asset('assets/images/rock.png', cacheWidth: 20, color: color);
       case 'ghost':
         return Icon(CommunityMaterialIcons.ghost, color: color);
       case 'dark':
         return Icon(CommunityMaterialIcons.moon_full, color: color);
       case 'dragon':
-        return Icon(Icons.star_border_purple500, color: color);
+        return Image.asset('assets/images/dragon.png', cacheWidth: 20, color: color);
       case 'steel':
         return Icon(CommunityMaterialIcons.soldering_iron, color: color);
       case 'fairy':
-        return Icon(Icons.star_border_purple500, color: color);
+        return Image.asset('assets/images/fairy.png', cacheWidth: 20, color: color);
       default:
         return Icon(Icons.star_border_purple500, color: color);
     }

@@ -15,7 +15,7 @@ class PokemonInfoController {
     return pokemonArtViewModel.pokemonArt;
   }
 
-  Future<Uint8List> getPokemonImage(int id, String imageUrl) {
+  Future<Uint8List?> getPokemonImage(int id, String imageUrl) {
     return pokemonRepository.getPokemonImage(id, imageUrl, pokemonArt: pokemonArtViewModel.pokemonArt);
   }
 }

@@ -8,12 +8,13 @@ import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_e
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
 import 'package:pokedex/common/widgets/my_text_field.dart';
+import 'package:pokedex/common/widgets/pokemon_card/pokemon_card_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/models/image_extension.dart';
 import '../../common/models/pokemon.dart';
 import '../../common/widgets/pokeball_loading.dart';
-import '../../common/widgets/pokemon_card.dart';
+import '../../common/widgets/pokemon_card/pokemon_card.dart';
 import '../controllers/home_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -39,12 +40,6 @@ class _HomePageState extends State<HomePage> {
     );
 
     _homeController.initialize();
-  }
-
-  @override
-  void dispose() {
-    _homeController.scrollController.dispose();
-    super.dispose();
   }
 
   @override
@@ -82,7 +77,6 @@ class _HomePageState extends State<HomePage> {
                   child: Scrollbar(
                     child: Consumer<SearchPokemonViewModel>(
                       builder: (context, searchPokemonViewModel, _) {
-                        // if (searchPokemonViewModel.isSearchingPokemon) {
                         return FutureBuilder(
                           future: _homeController.searchPokemon(),
                           builder: (context, snapshot) {
@@ -92,64 +86,56 @@ class _HomePageState extends State<HomePage> {
 
                             final searchedPokemon = snapshot.data!;
 
-                            return StatefulBuilder(
-                              builder: (context, setState) {
-                                return GridView.builder(
-                                  controller: _homeController.scrollController,
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 1.35,
+                            return GridView.builder(
+                              cacheExtent: MediaQuery.of(context).size.height * 1.5,
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 1.35,
+                              ),
+                              itemCount: searchedPokemon.length,
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.height * .1,
+                                top: MediaQuery.of(context).size.height * .085,
+                                left: 6,
+                                right: 6,
+                              ),
+                              itemBuilder: (context, index) {
+                                return FutureBuilder(
+                                  future: _homeController.getPokemonId(
+                                    searchedPokemon[index],
+                                    art: pokemonArtViewModel.pokemonArt,
                                   ),
-                                  itemCount: searchedPokemon.length,
-                                  padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).size.height * .1,
-                                    top: MediaQuery.of(context).size.height * .085,
-                                    left: 6,
-                                    right: 6,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    final pokemonArt = pokemonArtViewModel.pokemonArt;
+                                  builder: (context, snapshot) {
+                                    try {
+                                      if (!snapshot.hasData) return const SizedBox();
 
-                                    return FutureBuilder(
-                                      future: _homeController.getPokemonId(
-                                        searchedPokemon[index],
-                                        art: pokemonArt,
-                                      ),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return const Center(child: PokeballLoading());
-                                        }
+                                      final pokemon = snapshot.data as Pokemon;
+                                      final imageUrl =
+                                          pokemon.getImageUrlFromPokemonArt(pokemonArtViewModel.pokemonArt);
 
-                                        if (!snapshot.hasData) {
-                                          return Container();
-                                        }
-
-                                        final pokemon = snapshot.data as Pokemon;
-                                        final imageUrl = pokemon.getImageUrlFromPokemonArt(pokemonArt);
-
-                                        return FutureBuilder(
+                                      return Padding(
+                                        padding: const EdgeInsets.all(6),
+                                        child: FutureBuilder(
                                           future: _homeController.getPokemonImage(
                                             searchedPokemon[index],
                                             imageUrl,
                                           ),
                                           builder: (context, snapshot) {
-                                            if (snapshot.connectionState == ConnectionState.waiting) {
-                                              return Container();
-                                            }
+                                            if (!snapshot.hasData) return const PokemonCardLoading();
 
-                                            return Padding(
-                                              padding: const EdgeInsets.all(6),
-                                              child: PokemonCard(
-                                                image: snapshot.data as Uint8List,
-                                                pokemon,
-                                                pokemonArt: pokemonArt,
-                                                imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                                              ),
+                                            return PokemonCard(
+                                              image: snapshot.data,
+                                              pokemon,
+                                              pokemonArt: pokemonArtViewModel.pokemonArt,
+                                              imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
                                             );
                                           },
-                                        );
-                                      },
-                                    );
+                                        ),
+                                      );
+                                    } catch (e) {
+                                      print('ERRO HOMEPAGE');
+                                      return Container();
+                                    }
                                   },
                                 );
                               },
@@ -159,22 +145,6 @@ class _HomePageState extends State<HomePage> {
                         // }
                       },
                     ),
-                  ),
-                ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ValueListenableBuilder(
-                    valueListenable: _homeController.isLoadingMorePokemon,
-                    builder: (context, isLoadingMorePokemon, _) {
-                      return Visibility(
-                        visible: isLoadingMorePokemon,
-                        child: Container(
-                          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          child: const PokeballLoading(),
-                        ),
-                      );
-                    },
                   ),
                 ),
                 Align(

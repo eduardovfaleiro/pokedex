@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class PokeballLoading extends StatefulWidget {
-  const PokeballLoading({super.key});
+  final double height;
+  final Color? color;
+
+  const PokeballLoading({super.key, this.height = 50, this.color});
 
   @override
   State<PokeballLoading> createState() => _PokeballLoadingState();
@@ -45,7 +48,12 @@ class _PokeballLoadingState extends State<PokeballLoading> with TickerProviderSt
   Widget build(BuildContext context) {
     return RotationTransition(
       turns: _curvedAnimation,
-      child: Image.asset('assets/images/pokeball.png', height: 50, color: Colors.red),
+      child: Image.asset(
+        'assets/images/pokeball.png',
+        height: widget.height,
+        width: widget.height,
+        color: widget.color ?? Colors.red,
+      ),
     );
   }
 }

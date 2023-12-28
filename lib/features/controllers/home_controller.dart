@@ -21,35 +21,14 @@ class HomeController {
     required this.searchPokemonViewModel,
   });
 
-  final scrollController = ScrollController();
-  final isLoadingMorePokemon = ValueNotifier(false);
+  final pokemonOnDownloadCount = ValueNotifier(0);
 
   Future<void> initialize() async {
     searchPokemonViewModel.initialize();
     pokemonArtViewModel.initialize();
-
-    scrollController.removeListener(() {});
-
-    int hitBottomCount = 0;
-
-    scrollController.addListener(() async {
-      if (scrollController.position.atEdge) {
-        bool isBottom = scrollController.position.pixels != 0;
-
-        if (isBottom) {
-          hitBottomCount++;
-
-          if (hitBottomCount >= 3) {
-            isLoadingMorePokemon.value = true;
-            await Future.delayed(const Duration(seconds: 2));
-            isLoadingMorePokemon.value = false;
-          }
-        }
-      }
-    });
   }
 
-  Future<Pokemon> getPokemonId(int pokemonId, {required PokemonArt art}) {
+  Future<Pokemon> getPokemonId(int pokemonId, {required PokemonArt art}) async {
     return pokemonRepository.getPokemonId(pokemonId, art: art);
   }
 
@@ -61,7 +40,7 @@ class HomeController {
     pokemonArtViewModel.switchArt();
   }
 
-  Future<Uint8List> getPokemonImage(int id, String imageUrl) {
+  Future<Uint8List?> getPokemonImage(int id, String imageUrl) {
     return pokemonRepository.getPokemonImage(id, imageUrl, pokemonArt: pokemonArtViewModel.pokemonArt);
   }
 }

@@ -14,7 +14,7 @@ class HivePokemon extends HiveObject {
   @HiveField(2)
   final List<dynamic> types;
   @HiveField(3)
-  final List<String> imageUrls;
+  final List<String?> imageUrls;
   @HiveField(4)
   final int heightDecimeter;
   @HiveField(5)

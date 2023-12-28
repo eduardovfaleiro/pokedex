@@ -10,7 +10,7 @@ class Pokemon {
   final int id;
   final String name;
   final List<dynamic> types;
-  final List<String> imageUrls;
+  final List<String?> imageUrls;
   final int heightDecimeter;
   final int weightHectogram;
   final PokemonStats stats;

@@ -20,7 +20,7 @@ class HivePokemonAdapter extends TypeAdapter<HivePokemon> {
       id: fields[0] as int,
       name: fields[1] as String,
       types: (fields[2] as List).cast<dynamic>(),
-      imageUrls: (fields[3] as List).cast<String>(),
+      imageUrls: (fields[3] as List).cast<String?>(),
       heightDecimeter: fields[4] as int,
       weightHectogram: fields[5] as int,
       stats: fields[6] as HivePokemonStats,

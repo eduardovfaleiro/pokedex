@@ -10,7 +10,7 @@ class PokemonImageLoader extends StatelessWidget {
   final int id;
   final double height;
   final String imageExtension;
-  final Uint8List image;
+  final Uint8List? image;
 
   PokemonImageLoader(
     this.id,
@@ -24,10 +24,19 @@ class PokemonImageLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (imageExtension == ImageExtension.svg) {
-      return SvgPicture.memory(image, height: height);
-    }
+    try {
+      if (image == null) {
+        return SvgPicture.asset('assets/images/default_pokemon.svg');
+      }
 
-    return Image.memory(image, height: height);
+      if (imageExtension == ImageExtension.svg) {
+        return SvgPicture.memory(image!, height: height);
+      }
+
+      return Image.memory(image!, height: height);
+    } catch (e) {
+      print('ERRO POKEMONIMAGELOADER');
+      return Container();
+    }
   }
 }

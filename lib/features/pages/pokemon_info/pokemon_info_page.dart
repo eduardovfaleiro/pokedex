@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pokedex/common/services/pokemon_colors_service.dart';
 import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
+import 'package:pokedex/common/widgets/pokeball_loading.dart';
 import 'package:pokedex/common/widgets/pokemon_image_loader.dart';
 import 'package:pokedex/common/widgets/pokemon_type_image_loader.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
@@ -79,12 +80,14 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                         future: widget.pokemonInfoController.getPokemonImage(widget.pokemon.id, imageUrl),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Container();
+                            return Padding(
+                                padding: const EdgeInsets.all(55),
+                                child: PokeballLoading(color: Color.lerp(widget.pokemon.color, Colors.white, 0.7)));
                           }
 
                           return PokemonImageLoader(
                             widget.pokemon.id,
-                            snapshot.data as Uint8List,
+                            snapshot.data,
                             imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
                             height: 160,
                           );

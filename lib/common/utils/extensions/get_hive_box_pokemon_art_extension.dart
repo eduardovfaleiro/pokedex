@@ -7,14 +7,14 @@ import '../const/hive_boxes.dart';
 import '../const/pokemon_art.dart';
 
 extension GetHiveBoxFromPokemonArt on PokemonArt {
-  Box<Uint8List> getHiveBox() {
+  Box<Uint8List?> getHiveBox() {
     switch (this) {
       case PokemonArt.officialArtwork:
-        return Hive.box<Uint8List>(HiveBoxes.pokemonImgOfficialArtwork);
+        return Hive.box<Uint8List?>(HiveBoxes.pokemonImgOfficialArtwork);
       case PokemonArt.dreamWorld:
-        return Hive.box<Uint8List>(HiveBoxes.pokemonImgDreamWorld);
+        return Hive.box<Uint8List?>(HiveBoxes.pokemonImgDreamWorld);
       case PokemonArt.home:
-        return Hive.box<Uint8List>(HiveBoxes.pokemonImgHome);
+        return Hive.box<Uint8List?>(HiveBoxes.pokemonImgHome);
     }
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
@@ -23,8 +24,7 @@ class PokemonRepository {
     var pokemon = Pokemon.fromMap(json);
 
     for (var imageUrl in pokemon.imageUrls) {
-      final imageBytes = await _getPokemonImageUrl(imageUrl);
-      await dataSource.cacheImage(id, imageBytes, pokemonArt: art);
+      await _cacheImage(pokemon.id, imageUrl, art: art);
     }
 
     await dataSource.cache(pokemon);
@@ -32,18 +32,36 @@ class PokemonRepository {
     return pokemon;
   }
 
-  Future<Uint8List> _getPokemonImageUrl(String url) async {
-    var response = await http.get(Uri.parse(url));
+  Future<void> _cacheImage(int id, String? imageUrl, {required PokemonArt art}) async {
+    Uint8List? imageBytes;
 
-    return response.bodyBytes;
+    if (imageUrl != null) {
+      imageBytes = await _getPokemonImageUrl(imageUrl);
+    }
+
+    await dataSource.cacheImage(id, imageBytes, pokemonArt: art);
   }
 
-  Future<Uint8List> getPokemonImage(int id, String imageUrl, {required PokemonArt pokemonArt}) async {
-    var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
-    if (localPokemonImage != null) return localPokemonImage;
+  Future<Uint8List?> _getPokemonImageUrl(String url) async {
+    try {
+      var response = await http.get(Uri.parse(url));
+      return response.bodyBytes;
+    } on SocketException {
+      return null;
+    }
+  }
 
-    var imageBytes = await _getPokemonImageUrl(imageUrl);
-    return imageBytes;
+  Future<Uint8List?> getPokemonImage(int id, String imageUrl, {required PokemonArt pokemonArt}) async {
+    try {
+      var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
+      if (localPokemonImage != null) return localPokemonImage;
+
+      var imageBytes = await _getPokemonImageUrl(imageUrl);
+      return imageBytes;
+    } catch (e) {
+      print('ERRO GETPOKEMONIMAGE');
+      return null;
+    }
   }
 
   Future<List<int>> searchPokemon(String args) async {

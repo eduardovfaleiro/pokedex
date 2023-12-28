@@ -15,8 +15,8 @@ class HiveManager {
     await Hive.openBox<HivePokemon>(HiveBoxes.pokemon);
     await Hive.openBox<Map>(HiveBoxes.pokemonUrl);
 
-    await Hive.openBox<Uint8List>(HiveBoxes.pokemonImgDreamWorld);
-    await Hive.openBox<Uint8List>(HiveBoxes.pokemonImgHome);
-    await Hive.openBox<Uint8List>(HiveBoxes.pokemonImgOfficialArtwork);
+    await Hive.openBox<Uint8List?>(HiveBoxes.pokemonImgDreamWorld);
+    await Hive.openBox<Uint8List?>(HiveBoxes.pokemonImgHome);
+    await Hive.openBox<Uint8List?>(HiveBoxes.pokemonImgOfficialArtwork);
   }
 }
