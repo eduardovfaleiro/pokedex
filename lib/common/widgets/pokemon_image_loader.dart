@@ -24,19 +24,14 @@ class PokemonImageLoader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    try {
-      if (image == null) {
-        return SvgPicture.asset('assets/images/default_pokemon.svg');
-      }
-
-      if (imageExtension == ImageExtension.svg) {
-        return SvgPicture.memory(image!, height: height);
-      }
-
-      return Image.memory(image!, height: height);
-    } catch (e) {
-      print('ERRO POKEMONIMAGELOADER');
-      return Container();
+    if (image == null) {
+      return SvgPicture.asset('assets/images/default_pokemon.svg');
     }
+
+    if (imageExtension == ImageExtension.svg) {
+      return SvgPicture.memory(image!, height: height);
+    }
+
+    return Image.memory(image!, height: height);
   }
 }

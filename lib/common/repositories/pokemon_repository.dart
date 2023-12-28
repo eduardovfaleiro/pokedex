@@ -52,16 +52,11 @@ class PokemonRepository {
   }
 
   Future<Uint8List?> getPokemonImage(int id, String imageUrl, {required PokemonArt pokemonArt}) async {
-    try {
-      var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
-      if (localPokemonImage != null) return localPokemonImage;
+    var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
+    if (localPokemonImage != null) return localPokemonImage;
 
-      var imageBytes = await _getPokemonImageUrl(imageUrl);
-      return imageBytes;
-    } catch (e) {
-      print('ERRO GETPOKEMONIMAGE');
-      return null;
-    }
+    var imageBytes = await _getPokemonImageUrl(imageUrl);
+    return imageBytes;
   }
 
   Future<List<int>> searchPokemon(String args) async {

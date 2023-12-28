@@ -100,43 +100,40 @@ class _HomePageState extends State<HomePage> {
                                 right: 6,
                               ),
                               itemBuilder: (context, index) {
-                                return FutureBuilder(
-                                  future: _homeController.getPokemonId(
-                                    searchedPokemon[index],
-                                    art: pokemonArtViewModel.pokemonArt,
-                                  ),
-                                  builder: (context, snapshot) {
-                                    try {
+                                return Padding(
+                                  padding: const EdgeInsets.all(6),
+                                  child: FutureBuilder(
+                                    future: _homeController.getPokemonId(
+                                      searchedPokemon[index],
+                                      art: pokemonArtViewModel.pokemonArt,
+                                    ),
+                                    builder: (context, snapshot) {
                                       if (!snapshot.hasData) return const SizedBox();
 
                                       final pokemon = snapshot.data as Pokemon;
                                       final imageUrl =
                                           pokemon.getImageUrlFromPokemonArt(pokemonArtViewModel.pokemonArt);
 
-                                      return Padding(
-                                        padding: const EdgeInsets.all(6),
-                                        child: FutureBuilder(
-                                          future: _homeController.getPokemonImage(
-                                            searchedPokemon[index],
-                                            imageUrl,
-                                          ),
-                                          builder: (context, snapshot) {
-                                            if (!snapshot.hasData) return const PokemonCardLoading();
-
-                                            return PokemonCard(
-                                              image: snapshot.data,
-                                              pokemon,
-                                              pokemonArt: pokemonArtViewModel.pokemonArt,
-                                              imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                                            );
-                                          },
+                                      return FutureBuilder(
+                                        future: _homeController.getPokemonImage(
+                                          searchedPokemon[index],
+                                          imageUrl,
                                         ),
+                                        builder: (context, snapshot) {
+                                          if (snapshot.connectionState == ConnectionState.waiting) {
+                                            return const PokemonCardLoading();
+                                          }
+
+                                          return PokemonCard(
+                                            image: snapshot.data,
+                                            pokemon,
+                                            pokemonArt: pokemonArtViewModel.pokemonArt,
+                                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                                          );
+                                        },
                                       );
-                                    } catch (e) {
-                                      print('ERRO HOMEPAGE');
-                                      return Container();
-                                    }
-                                  },
+                                    },
+                                  ),
                                 );
                               },
                             );
