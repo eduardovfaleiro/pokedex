@@ -1,10 +1,6 @@
-import 'package:hive_flutter/hive_flutter.dart';
-
 import '../../datasources/local/models/hive_pokemon.dart';
-import '../../datasources/local/models/hive_pokemon_image_url.dart';
 import '../../datasources/local/models/hive_pokemon_stats.dart';
 import '../../models/pokemon.dart';
-import '../../models/pokemon_image_url.dart';
 import '../../models/pokemon_stats.dart';
 
 extension PokemonExtension on Pokemon {
@@ -12,7 +8,7 @@ extension PokemonExtension on Pokemon {
     return HivePokemon(
       id: id,
       name: name,
-      images: List.from(images.map((e) => e.toHiveModel())),
+      imageUrls: imageUrls,
       stats: stats.toHiveModel(),
       types: types,
       weightHectogram: weightHectogram,
@@ -31,18 +27,6 @@ extension PokemonStatsExtension on PokemonStats {
       specialDefense: specialDefense,
       speed: speed,
     );
-  }
-}
-
-extension PokemonImageUrlExtension on PokemonImageUrl {
-  HivePokemonImageUrl toHiveModel() {
-    return HivePokemonImageUrl(url, art: art);
-  }
-}
-
-extension HivePokemonImageUrlExtension on HivePokemonImageUrl {
-  PokemonImageUrl toEntity() {
-    return PokemonImageUrl(url, art: art);
   }
 }
 
@@ -65,7 +49,7 @@ extension HivePokemonExtension on HivePokemon {
       id: id,
       name: name,
       types: types,
-      images: List.from(images.map((e) => e.toEntity())),
+      imageUrls: imageUrls,
       heightDecimeter: heightDecimeter,
       weightHectogram: weightHectogram,
       stats: stats.toEntity(),

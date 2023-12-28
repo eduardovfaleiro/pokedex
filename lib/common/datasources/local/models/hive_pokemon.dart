@@ -1,9 +1,5 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
-import 'dart:typed_data';
-
 import 'package:hive/hive.dart';
-import 'package:pokedex/common/datasources/local/models/hive_pokemon_image_url.dart';
 
 import 'hive_pokemon_stats.dart';
 
@@ -18,7 +14,7 @@ class HivePokemon extends HiveObject {
   @HiveField(2)
   final List<dynamic> types;
   @HiveField(3)
-  final List<HivePokemonImageUrl> images;
+  final List<String> imageUrls;
   @HiveField(4)
   final int heightDecimeter;
   @HiveField(5)
@@ -30,7 +26,7 @@ class HivePokemon extends HiveObject {
     required this.id,
     required this.name,
     required this.types,
-    required this.images,
+    required this.imageUrls,
     required this.heightDecimeter,
     required this.weightHectogram,
     required this.stats,

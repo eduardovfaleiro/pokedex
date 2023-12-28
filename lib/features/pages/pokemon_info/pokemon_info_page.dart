@@ -1,14 +1,17 @@
+import 'dart:typed_data';
+
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/common/services/pokemon_colors_service.dart';
-import 'package:pokedex/common/utils/extensions/get_file_type_extension.dart';
+import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
+import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
 import 'package:pokedex/common/widgets/pokemon_image_loader.dart';
 import 'package:pokedex/common/widgets/pokemon_type_image_loader.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
-import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
 import 'package:pokedex/features/pages/pokemon_info/components/stat_component.dart';
 
+import '../../../common/models/image_extension.dart';
 import '../../../common/models/pokemon.dart';
 
 class PokemonInfoPage extends StatefulWidget {
@@ -67,12 +70,27 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    PokemonImageLoader(
-                      widget.pokemon.id,
-                      widget.pokemon.images,
-                      pokemonArt: widget.pokemonInfoController.getPokemonArt(),
-                      height: 160,
-                    ),
+                    Builder(builder: (context) {
+                      final imageUrl = widget.pokemon.getImageUrlFromPokemonArt(
+                        widget.pokemonInfoController.getPokemonArt(),
+                      );
+
+                      return FutureBuilder(
+                        future: widget.pokemonInfoController.getPokemonImage(widget.pokemon.id, imageUrl),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Container();
+                          }
+
+                          return PokemonImageLoader(
+                            widget.pokemon.id,
+                            snapshot.data as Uint8List,
+                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                            height: 160,
+                          );
+                        },
+                      );
+                    }),
                     Text(
                       widget.pokemon.name.capitalize(),
                       style: TextStyle(

@@ -1,21 +1,26 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/utils/extensions/get_file_type_extension.dart';
+import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/repositories/pokemon_repository.dart';
+import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
 import 'package:pokedex/features/pages/pokemon_info/pokemon_info_page.dart';
-import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
 import 'package:provider/provider.dart';
 
-import '../utils/const/pokemon_art.dart';
 import '../models/pokemon.dart';
+import '../utils/const/pokemon_art.dart';
 import 'pokemon_image_loader.dart';
 import 'pokemon_type_image_loader.dart';
 
 class PokemonCard extends StatelessWidget {
   final PokemonArt pokemonArt;
   final Pokemon pokemon;
+  final Uint8List image;
+  final String imageExtension;
 
-  const PokemonCard(this.pokemon, {super.key, required this.pokemonArt});
+  const PokemonCard(this.pokemon, {super.key, required this.pokemonArt, required this.image, required this.imageExtension});
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +31,12 @@ class PokemonCard extends StatelessWidget {
           MaterialPageRoute(builder: (context) {
             return PokemonInfoPage(
               pokemon,
-              pokemonInfoController: PokemonInfoController(pokemonArtViewModel: context.read<PokemonArtViewModel>()),
+              pokemonInfoController: PokemonInfoController(
+                pokemonArtViewModel: context.read<PokemonArtViewModel>(),
+                pokemonRepository: PokemonRepository(
+                  HivePokemonDataSource(),
+                ),
+              ),
             );
           }),
         );
@@ -60,9 +70,9 @@ class PokemonCard extends StatelessWidget {
               padding: const EdgeInsets.only(right: 12, left: 4),
               child: PokemonImageLoader(
                 pokemon.id,
-                pokemon.images,
+                image,
                 height: 75,
-                pokemonArt: pokemonArt,
+                imageExtension: imageExtension,
               ),
             ),
             const SizedBox(height: 8),

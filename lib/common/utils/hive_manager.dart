@@ -2,7 +2,6 @@ import 'dart:typed_data';
 
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:pokedex/common/datasources/local/models/hive_pokemon.dart';
-import 'package:pokedex/common/datasources/local/models/hive_pokemon_image_url.dart';
 import 'package:pokedex/common/datasources/local/models/hive_pokemon_stats.dart';
 import 'package:pokedex/common/utils/const/hive_boxes.dart';
 
@@ -12,7 +11,6 @@ class HiveManager {
 
     Hive.registerAdapter(HivePokemonAdapter());
     Hive.registerAdapter(HivePokemonStatsAdapter());
-    Hive.registerAdapter(HivePokemonImageUrlAdapter());
 
     await Hive.openBox<HivePokemon>(HiveBoxes.pokemon);
     await Hive.openBox<Map>(HiveBoxes.pokemonUrl);

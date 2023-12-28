@@ -1,19 +1,16 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 
 import '../services/pokemon_colors_service.dart';
-import 'pokemon_image_url.dart';
 import 'pokemon_stats.dart';
 
 class Pokemon {
   final int id;
   final String name;
   final List<dynamic> types;
-  final List<PokemonImageUrl> images;
+  final List<String> imageUrls;
   final int heightDecimeter;
   final int weightHectogram;
   final PokemonStats stats;
@@ -22,7 +19,7 @@ class Pokemon {
     required this.id,
     required this.name,
     required this.types,
-    required this.images,
+    required this.imageUrls,
     required this.heightDecimeter,
     required this.weightHectogram,
     required this.stats,
@@ -43,10 +40,10 @@ class Pokemon {
       id: map['id'] as int,
       name: map['name'] as String,
       types: map['types'] as List<dynamic>,
-      images: [
-        PokemonImageUrl(sprites['dream_world']['front_default'], art: 'dreamWorld'),
-        PokemonImageUrl(sprites['official-artwork']['front_default'], art: 'officialArtwork'),
-        PokemonImageUrl(sprites['home']['front_default'], art: 'home'),
+      imageUrls: [
+        sprites['dream_world']['front_default'],
+        sprites['official-artwork']['front_default'],
+        sprites['home']['front_default'],
       ],
       heightDecimeter: map['height'] as int,
       weightHectogram: map['weight'] as int,
