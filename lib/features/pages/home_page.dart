@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
@@ -77,70 +78,46 @@ class _HomePageState extends State<HomePage> {
                   child: Scrollbar(
                     child: Consumer<SearchPokemonViewModel>(
                       builder: (context, searchPokemonViewModel, _) {
-                        return FutureBuilder(
-                          future: _homeController.searchPokemon(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: PokeballLoading());
-                            }
+                        return PagedGridView(
+                          pagingController: _homeController.pagingController,
+                          padding: EdgeInsets.only(
+                            bottom: MediaQuery.of(context).size.height * .1,
+                            top: MediaQuery.of(context).size.height * .085,
+                            left: 6,
+                            right: 6,
+                          ),
+                          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            childAspectRatio: 1.35,
+                          ),
+                          builderDelegate: PagedChildBuilderDelegate(
+                            itemBuilder: (context, pokemon, index) {
+                              final pokemonArt = pokemonArtViewModel.pokemonArt;
+                              final imageUrl = (pokemon as Pokemon).getImageUrlFromPokemonArt(pokemonArt);
 
-                            final searchedPokemon = snapshot.data!;
+                              return FutureBuilder(
+                                future: _homeController.getPokemonImage(
+                                  pokemon.id,
+                                  imageUrl,
+                                ),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return Container();
+                                  }
 
-                            return GridView.builder(
-                              cacheExtent: MediaQuery.of(context).size.height * 1.5,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1.35,
-                              ),
-                              itemCount: searchedPokemon.length,
-                              padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).size.height * .1,
-                                top: MediaQuery.of(context).size.height * .085,
-                                left: 6,
-                                right: 6,
-                              ),
-                              itemBuilder: (context, index) {
-                                return FutureBuilder(
-                                  future: _homeController.getPokemonId(
-                                    searchedPokemon[index],
-                                    art: pokemonArtViewModel.pokemonArt,
-                                  ),
-                                  builder: (context, snapshot) {
-                                    try {
-                                      if (!snapshot.hasData) return const SizedBox();
-
-                                      final pokemon = snapshot.data as Pokemon;
-                                      final imageUrl =
-                                          pokemon.getImageUrlFromPokemonArt(pokemonArtViewModel.pokemonArt);
-
-                                      return Padding(
-                                        padding: const EdgeInsets.all(6),
-                                        child: FutureBuilder(
-                                          future: _homeController.getPokemonImage(
-                                            searchedPokemon[index],
-                                            imageUrl,
-                                          ),
-                                          builder: (context, snapshot) {
-                                            if (!snapshot.hasData) return const PokemonCardLoading();
-
-                                            return PokemonCard(
-                                              image: snapshot.data,
-                                              pokemon,
-                                              pokemonArt: pokemonArtViewModel.pokemonArt,
-                                              imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                                            );
-                                          },
-                                        ),
-                                      );
-                                    } catch (e) {
-                                      print('ERRO HOMEPAGE');
-                                      return Container();
-                                    }
-                                  },
-                                );
-                              },
-                            );
-                          },
+                                  return Padding(
+                                    padding: const EdgeInsets.all(6),
+                                    child: PokemonCard(
+                                      image: snapshot.data as Uint8List,
+                                      pokemon,
+                                      pokemonArt: pokemonArt,
+                                      imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                                    ),
+                                  );
+                                },
+                              );
+                            },
+                          ),
                         );
                         // }
                       },

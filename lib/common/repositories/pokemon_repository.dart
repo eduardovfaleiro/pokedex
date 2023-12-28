@@ -19,12 +19,12 @@ class PokemonRepository {
     if (localPokemon != null) return localPokemon;
 
     var response = await http.get(Uri.parse('${PokeApi.pokemon}/$id'));
-    var json = jsonDecode(response.body) as Map<String, dynamic>;
 
-    var pokemon = Pokemon.fromMap(json);
+    var pokemon = Pokemon.fromMap(jsonDecode(response.body));
+    final pokemonId = pokemon.id;
 
     for (var imageUrl in pokemon.imageUrls) {
-      await _cacheImage(pokemon.id, imageUrl, art: art);
+      await _cacheImage(pokemonId, imageUrl, art: art);
     }
 
     await dataSource.cache(pokemon);
