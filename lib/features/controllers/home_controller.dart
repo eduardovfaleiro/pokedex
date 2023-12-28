@@ -1,8 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 
+import 'dart:ffi';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
@@ -15,36 +17,37 @@ class HomeController {
   final PokemonArtViewModel pokemonArtViewModel;
   final SearchPokemonViewModel searchPokemonViewModel;
 
+  final pagingController = PagingController(firstPageKey: 0);
+
   HomeController({
     required this.pokemonRepository,
     required this.pokemonArtViewModel,
     required this.searchPokemonViewModel,
   });
 
-  final scrollController = ScrollController();
-  final isLoadingMorePokemon = ValueNotifier(false);
-
   Future<void> initialize() async {
     searchPokemonViewModel.initialize();
     pokemonArtViewModel.initialize();
 
-    scrollController.removeListener(() {});
+    pagingController.addPageRequestListener((pageKey) async {
+      if (searchPokemonViewModel.searchedPokemon.isEmpty) {
+        await searchPokemonViewModel.searchPokemon();
+      }
 
-    int hitBottomCount = 0;
+      final newPokemon = <Pokemon>[];
 
-    scrollController.addListener(() async {
-      if (scrollController.position.atEdge) {
-        bool isBottom = scrollController.position.pixels != 0;
+      for (int i = pageKey; i < pageKey + 16; i++) {
+        int id = searchPokemonViewModel.searchedPokemon[i];
+        final pokemon = await pokemonRepository.getPokemonId(id, art: pokemonArtViewModel.pokemonArt);
 
-        if (isBottom) {
-          hitBottomCount++;
+        newPokemon.add(pokemon);
+      }
 
-          if (hitBottomCount >= 3) {
-            isLoadingMorePokemon.value = true;
-            await Future.delayed(const Duration(seconds: 2));
-            isLoadingMorePokemon.value = false;
-          }
-        }
+      if (newPokemon.length < 16) {
+        pagingController.appendLastPage(newPokemon);
+      } else {
+        int nextPageKey = pageKey + newPokemon.length;
+        pagingController.appendPage(newPokemon, nextPageKey);
       }
     });
   }
@@ -53,9 +56,9 @@ class HomeController {
     return pokemonRepository.getPokemonId(pokemonId, art: art);
   }
 
-  Future<List<int>> searchPokemon() async {
-    return searchPokemonViewModel.searchPokemon();
-  }
+  // Future<List<int>> searchPokemon() async {
+  //   return searchPokemonViewModel.searchPokemon();
+  // }
 
   void switchArt() {
     pokemonArtViewModel.switchArt();

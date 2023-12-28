@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
@@ -43,7 +44,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void dispose() {
-    _homeController.scrollController.dispose();
+    _homeController.pagingController.dispose();
     super.dispose();
   }
 
@@ -77,106 +78,151 @@ class _HomePageState extends State<HomePage> {
           builder: (context, pokemonArtViewModel, _) {
             return Stack(
               children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Scrollbar(
-                    child: Consumer<SearchPokemonViewModel>(
-                      builder: (context, searchPokemonViewModel, _) {
-                        // if (searchPokemonViewModel.isSearchingPokemon) {
-                        return FutureBuilder(
-                          future: _homeController.searchPokemon(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: PokeballLoading());
-                            }
+                Consumer<SearchPokemonViewModel>(
+                  builder: (context, searchPokemonViewModel, _) {
+                    return PagedGridView(
+                      pagingController: _homeController.pagingController,
+                      padding: EdgeInsets.only(
+                        bottom: MediaQuery.of(context).size.height * .1,
+                        top: MediaQuery.of(context).size.height * .085,
+                        left: 6,
+                        right: 6,
+                      ),
+                      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        childAspectRatio: 1.35,
+                      ),
+                      builderDelegate: PagedChildBuilderDelegate(
+                        itemBuilder: (context, pokemon, index) {
+                          final pokemonArt = pokemonArtViewModel.pokemonArt;
+                          final imageUrl = (pokemon as Pokemon).getImageUrlFromPokemonArt(pokemonArt);
 
-                            final searchedPokemon = snapshot.data!;
+                          return FutureBuilder(
+                            future: _homeController.getPokemonImage(
+                              pokemon.id,
+                              imageUrl,
+                            ),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return Container();
+                              }
 
-                            return StatefulBuilder(
-                              builder: (context, setState) {
-                                return GridView.builder(
-                                  controller: _homeController.scrollController,
-                                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                    childAspectRatio: 1.35,
-                                  ),
-                                  itemCount: searchedPokemon.length,
-                                  padding: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).size.height * .1,
-                                    top: MediaQuery.of(context).size.height * .085,
-                                    left: 6,
-                                    right: 6,
-                                  ),
-                                  itemBuilder: (context, index) {
-                                    final pokemonArt = pokemonArtViewModel.pokemonArt;
-
-                                    return FutureBuilder(
-                                      future: _homeController.getPokemonId(
-                                        searchedPokemon[index],
-                                        art: pokemonArt,
-                                      ),
-                                      builder: (context, snapshot) {
-                                        if (snapshot.connectionState == ConnectionState.waiting) {
-                                          return const Center(child: PokeballLoading());
-                                        }
-
-                                        if (!snapshot.hasData) {
-                                          return Container();
-                                        }
-
-                                        final pokemon = snapshot.data as Pokemon;
-                                        final imageUrl = pokemon.getImageUrlFromPokemonArt(pokemonArt);
-
-                                        return FutureBuilder(
-                                          future: _homeController.getPokemonImage(
-                                            searchedPokemon[index],
-                                            imageUrl,
-                                          ),
-                                          builder: (context, snapshot) {
-                                            if (snapshot.connectionState == ConnectionState.waiting) {
-                                              return Container();
-                                            }
-
-                                            return Padding(
-                                              padding: const EdgeInsets.all(6),
-                                              child: PokemonCard(
-                                                image: snapshot.data as Uint8List,
-                                                pokemon,
-                                                pokemonArt: pokemonArt,
-                                                imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      },
-                                    );
-                                  },
-                                );
-                              },
-                            );
-                          },
-                        );
-                        // }
-                      },
-                    ),
-                  ),
+                              return Padding(
+                                padding: const EdgeInsets.all(6),
+                                child: PokemonCard(
+                                  image: snapshot.data as Uint8List,
+                                  pokemon,
+                                  pokemonArt: pokemonArt,
+                                  imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: ValueListenableBuilder(
-                    valueListenable: _homeController.isLoadingMorePokemon,
-                    builder: (context, isLoadingMorePokemon, _) {
-                      return Visibility(
-                        visible: isLoadingMorePokemon,
-                        child: Container(
-                          decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
-                          padding: const EdgeInsets.symmetric(vertical: 24),
-                          child: const PokeballLoading(),
-                        ),
-                      );
-                    },
-                  ),
-                ),
+                // SizedBox(
+                //   width: MediaQuery.of(context).size.width,
+                //   child: Scrollbar(
+                //     child: Consumer<SearchPokemonViewModel>(
+                //       builder: (context, searchPokemonViewModel, _) {
+                //         // if (searchPokemonViewModel.isSearchingPokemon) {
+                //         return FutureBuilder(
+                //           future: _homeController.searchPokemon(),
+                //           builder: (context, snapshot) {
+                //             if (snapshot.connectionState == ConnectionState.waiting) {
+                //               return const Center(child: PokeballLoading());
+                //             }
+
+                //             final searchedPokemon = snapshot.data!;
+
+                //             return StatefulBuilder(
+                //               builder: (context, setState) {
+                //                 return GridView.builder(
+                //                   controller: _homeController.scrollController,
+                //                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                //                     crossAxisCount: 2,
+                //                     childAspectRatio: 1.35,
+                //                   ),
+                //                   itemCount: searchedPokemon.length,
+                //                   padding: EdgeInsets.only(
+                //                     bottom: MediaQuery.of(context).size.height * .1,
+                //                     top: MediaQuery.of(context).size.height * .085,
+                //                     left: 6,
+                //                     right: 6,
+                //                   ),
+                //                   itemBuilder: (context, index) {
+                //                     final pokemonArt = pokemonArtViewModel.pokemonArt;
+
+                //                     return FutureBuilder(
+                //                       future: _homeController.getPokemonId(
+                //                         searchedPokemon[index],
+                //                         art: pokemonArt,
+                //                       ),
+                //                       builder: (context, snapshot) {
+                //                         if (snapshot.connectionState == ConnectionState.waiting) {
+                //                           return const Center(child: PokeballLoading());
+                //                         }
+
+                //                         if (!snapshot.hasData) {
+                //                           return Container();
+                //                         }
+
+                //                         final pokemon = snapshot.data as Pokemon;
+                //                         final imageUrl = pokemon.getImageUrlFromPokemonArt(pokemonArt);
+
+                //                         return FutureBuilder(
+                //                           future: _homeController.getPokemonImage(
+                //                             searchedPokemon[index],
+                //                             imageUrl,
+                //                           ),
+                //                           builder: (context, snapshot) {
+                //                             if (snapshot.connectionState == ConnectionState.waiting) {
+                //                               return Container();
+                //                             }
+
+                //                             return Padding(
+                //                               padding: const EdgeInsets.all(6),
+                //                               child: PokemonCard(
+                //                                 image: snapshot.data as Uint8List,
+                //                                 pokemon,
+                //                                 pokemonArt: pokemonArt,
+                //                                 imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                //                               ),
+                //                             );
+                //                           },
+                //                         );
+                //                       },
+                //                     );
+                //                   },
+                //                 );
+                //               },
+                //             );
+                //           },
+                //         );
+                //         // }
+                //       },
+                //     ),
+                //   ),
+                // ),
+                // Align(
+                //   alignment: Alignment.bottomCenter,
+                //   child: ValueListenableBuilder(
+                //     valueListenable: _homeController.isLoadingMorePokemon,
+                //     builder: (context, isLoadingMorePokemon, _) {
+                //       return Visibility(
+                //         visible: isLoadingMorePokemon,
+                //         child: Container(
+                //           decoration: const BoxDecoration(color: Colors.white, shape: BoxShape.circle),
+                //           padding: const EdgeInsets.symmetric(vertical: 24),
+                //           child: const PokeballLoading(),
+                //         ),
+                //       );
+                //     },
+                //   ),
+                // ),
                 Align(
                   alignment: Alignment.topCenter,
                   child: Padding(

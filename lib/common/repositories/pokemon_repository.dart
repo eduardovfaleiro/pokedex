@@ -22,10 +22,10 @@ class PokemonRepository {
 
     var pokemon = Pokemon.fromMap(json);
 
-    for (var imageUrl in pokemon.imageUrls) {
-      final imageBytes = await _getPokemonImageUrl(imageUrl);
-      await dataSource.cacheImage(id, imageBytes, pokemonArt: art);
-    }
+    // for (var imageUrl in pokemon.imageUrls) {
+    //   final imageBytes = await _getPokemonImageUrl(imageUrl);
+    //   await dataSource.cacheImage(id, imageBytes, pokemonArt: art);
+    // }
 
     await dataSource.cache(pokemon);
 
@@ -39,8 +39,8 @@ class PokemonRepository {
   }
 
   Future<Uint8List> getPokemonImage(int id, String imageUrl, {required PokemonArt pokemonArt}) async {
-    var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
-    if (localPokemonImage != null) return localPokemonImage;
+    // var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
+    // if (localPokemonImage != null) return localPokemonImage;
 
     var imageBytes = await _getPokemonImageUrl(imageUrl);
     return imageBytes;

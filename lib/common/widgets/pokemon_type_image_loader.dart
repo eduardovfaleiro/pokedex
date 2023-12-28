@@ -24,7 +24,7 @@ class PokemonTypeImageLoader extends StatelessWidget {
       case 'electric':
         return Icon(CommunityMaterialIcons.lightning_bolt, color: color);
       case 'ice':
-        return Icon(CommunityMaterialIcons.ice_pop, color: color);
+        return Icon(Icons.ac_unit, color: color);
       case 'fighting':
         return Icon(CommunityMaterialIcons.sword_cross, color: color);
       case 'poison':
