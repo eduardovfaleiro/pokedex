@@ -2,8 +2,10 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
 
 import '../models/pokemon.dart';
 import '../utils/const/poke_api.dart';
@@ -14,22 +16,32 @@ class PokemonRepository {
 
   PokemonRepository(this.dataSource);
 
-  Future<Pokemon> getPokemonId(int id, {required PokemonArt art}) async {
+  Future<Pokemon?> getPokemonId(int id, {required PokemonArt art}) async {
     var localPokemon = await dataSource.getId(id);
-    if (localPokemon != null) return localPokemon;
 
-    var response = await http.get(Uri.parse('${PokeApi.pokemon}/$id'));
-    var json = jsonDecode(response.body) as Map<String, dynamic>;
+    if (localPokemon != null) {
+      final imageUrl = localPokemon.getImageUrlFromPokemonArt(art);
+      await _cacheImage(localPokemon.id, imageUrl, art: art);
 
-    var pokemon = Pokemon.fromMap(json);
-
-    for (var imageUrl in pokemon.imageUrls) {
-      await _cacheImage(pokemon.id, imageUrl, art: art);
+      return localPokemon;
     }
 
-    await dataSource.cache(pokemon);
+    try {
+      var response = await http.get(Uri.parse('${PokeApi.pokemon}/$id'));
+      var json = jsonDecode(response.body) as Map<String, dynamic>;
 
-    return pokemon;
+      var pokemon = Pokemon.fromMap(json);
+
+      final imageUrl = pokemon.getImageUrlFromPokemonArt(art);
+      await _cacheImage(pokemon.id, imageUrl, art: art);
+
+      await dataSource.cache(pokemon);
+
+      return pokemon;
+    } on SocketException catch (error) {
+      debugPrint('getPokemonId: $error');
+      return null;
+    }
   }
 
   Future<void> _cacheImage(int id, String? imageUrl, {required PokemonArt art}) async {
@@ -46,14 +58,17 @@ class PokemonRepository {
     try {
       var response = await http.get(Uri.parse(url));
       return response.bodyBytes;
-    } on SocketException {
+    } on SocketException catch (error) {
+      debugPrint('_getPokemonImageUrl: $error');
       return null;
     }
   }
 
-  Future<Uint8List?> getPokemonImage(int id, String imageUrl, {required PokemonArt pokemonArt}) async {
+  Future<Uint8List?> getPokemonImage(int id, String? imageUrl, {required PokemonArt pokemonArt}) async {
     var localPokemonImage = await dataSource.getImage(id, pokemonArt: pokemonArt);
     if (localPokemonImage != null) return localPokemonImage;
+
+    if (imageUrl == null) return null;
 
     var imageBytes = await _getPokemonImageUrl(imageUrl);
     return imageBytes;
@@ -83,7 +98,8 @@ class PokemonRepository {
 
       await dataSource.cachePokemonUrlList(pokemonUrlList);
       return pokemonUrlList;
-    } on http.ClientException {
+    } on http.ClientException catch (error) {
+      debugPrint('_getPokemonUrlList: $error');
       return [];
     }
   }

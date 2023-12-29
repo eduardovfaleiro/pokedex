@@ -18,7 +18,7 @@ class PokemonCard extends StatelessWidget {
   final PokemonArt pokemonArt;
   final Pokemon pokemon;
   final Uint8List? image;
-  final String imageExtension;
+  final String? imageExtension;
 
   const PokemonCard(
     this.pokemon, {

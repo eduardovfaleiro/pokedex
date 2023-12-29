@@ -16,7 +16,7 @@ class PokemonCardLoading extends StatelessWidget {
             blurRadius: 0,
             offset: Offset.zero,
             color: Color.fromARGB(90, 0, 0, 0),
-          )
+          ),
         ],
         borderRadius: BorderRadius.circular(8),
         gradient: const LinearGradient(

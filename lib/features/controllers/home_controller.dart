@@ -28,7 +28,7 @@ class HomeController {
     pokemonArtViewModel.initialize();
   }
 
-  Future<Pokemon> getPokemonId(int pokemonId, {required PokemonArt art}) async {
+  Future<Pokemon?> getPokemonId(int pokemonId, {required PokemonArt art}) {
     return pokemonRepository.getPokemonId(pokemonId, art: art);
   }
 

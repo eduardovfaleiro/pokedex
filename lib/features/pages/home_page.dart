@@ -108,7 +108,11 @@ class _HomePageState extends State<HomePage> {
                                       art: pokemonArtViewModel.pokemonArt,
                                     ),
                                     builder: (context, snapshot) {
-                                      if (!snapshot.hasData) return const SizedBox();
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return const PokemonCardLoading();
+                                      }
+
+                                      if (!snapshot.hasData) return Container();
 
                                       final pokemon = snapshot.data as Pokemon;
                                       final imageUrl =
@@ -128,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                                             image: snapshot.data,
                                             pokemon,
                                             pokemonArt: pokemonArtViewModel.pokemonArt,
-                                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl) ?? '',
                                           );
                                         },
                                       );
