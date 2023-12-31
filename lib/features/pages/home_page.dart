@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
@@ -85,6 +86,49 @@ class _HomePageState extends State<HomePage> {
                             }
 
                             final searchedPokemon = snapshot.data!;
+
+                            // TODO: continue from here
+                            return PagedGridView(
+                              pagingController: _homeController.pagingController,
+                              padding: EdgeInsets.only(
+                                bottom: MediaQuery.of(context).size.height * .1,
+                                top: MediaQuery.of(context).size.height * .085,
+                                left: 6,
+                                right: 6,
+                              ),
+                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                                childAspectRatio: 1.35,
+                              ),
+                              builderDelegate: PagedChildBuilderDelegate(
+                                itemBuilder: (context, pokemon, index) {
+                                  final pokemonArt = pokemonArtViewModel.pokemonArt;
+                                  final imageUrl = (pokemon as Pokemon).getImageUrlFromPokemonArt(pokemonArt);
+
+                                  return FutureBuilder(
+                                    future: _homeController.getPokemonImage(
+                                      pokemon.id,
+                                      imageUrl,
+                                    ),
+                                    builder: (context, snapshot) {
+                                      if (snapshot.connectionState == ConnectionState.waiting) {
+                                        return Container();
+                                      }
+
+                                      return Padding(
+                                        padding: const EdgeInsets.all(6),
+                                        child: PokemonCard(
+                                          image: snapshot.data as Uint8List,
+                                          pokemon,
+                                          pokemonArt: pokemonArt,
+                                          imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                              ),
+                            );
 
                             return GridView.builder(
                               cacheExtent: MediaQuery.of(context).size.height * 1.5,

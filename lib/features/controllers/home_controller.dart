@@ -3,6 +3,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
@@ -15,6 +16,8 @@ class HomeController {
   final PokemonArtViewModel pokemonArtViewModel;
   final SearchPokemonViewModel searchPokemonViewModel;
 
+  final pagingController = PagingController(firstPageKey: 0); // TODO: continue
+
   HomeController({
     required this.pokemonRepository,
     required this.pokemonArtViewModel,
@@ -26,6 +29,28 @@ class HomeController {
   Future<void> initialize() async {
     searchPokemonViewModel.initialize();
     pokemonArtViewModel.initialize();
+
+    pagingController.addPageRequestListener((pageKey) async {
+      if (searchPokemonViewModel.searchedPokemon.isEmpty) {
+        await searchPokemonViewModel.searchPokemon();
+      }
+
+      final newPokemon = <Pokemon>[];
+
+      for (int i = pageKey; i < pageKey + 16; i++) {
+        int id = searchPokemonViewModel.searchedPokemon[i];
+        final pokemon = await pokemonRepository.getPokemonId(id, art: pokemonArtViewModel.pokemonArt);
+
+        newPokemon.add(pokemon);
+      }
+
+      if (newPokemon.length < 16) {
+        pagingController.appendLastPage(newPokemon);
+      } else {
+        int nextPageKey = pageKey + newPokemon.length;
+        pagingController.appendPage(newPokemon, nextPageKey);
+      }
+    });
   }
 
   Future<Pokemon?> getPokemonId(int pokemonId, {required PokemonArt art}) {
