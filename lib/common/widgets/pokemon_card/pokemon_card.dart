@@ -79,6 +79,7 @@ class PokemonCard extends StatelessWidget {
                 image,
                 height: 75,
                 imageExtension: imageExtension,
+                defaultColor: Color.lerp(pokemon.color, Colors.white, 0.5)!,
               ),
             ),
             const SizedBox(height: 8),

@@ -88,6 +88,7 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                           return PokemonImageLoader(
                             widget.pokemon.id,
                             snapshot.data,
+                            defaultColor: Color.lerp(widget.pokemon.color, Colors.white, 0.5)!,
                             imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
                             height: 160,
                           );

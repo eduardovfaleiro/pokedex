@@ -132,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                                             image: snapshot.data,
                                             pokemon,
                                             pokemonArt: pokemonArtViewModel.pokemonArt,
-                                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl) ?? '',
+                                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
                                           );
                                         },
                                       );

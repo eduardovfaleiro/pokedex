@@ -9,8 +9,9 @@ import 'package:pokedex/common/models/image_extension.dart';
 class PokemonImageLoader extends StatelessWidget {
   final int id;
   final double height;
-  final String imageExtension;
+  final String? imageExtension;
   final Uint8List? image;
+  final Color defaultColor;
 
   PokemonImageLoader(
     this.id,
@@ -18,6 +19,7 @@ class PokemonImageLoader extends StatelessWidget {
     super.key,
     required this.imageExtension,
     required this.height,
+    required this.defaultColor,
   });
 
   late final String imageUrl;
@@ -25,7 +27,11 @@ class PokemonImageLoader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (image == null) {
-      return SvgPicture.asset('assets/images/default_pokemon.svg');
+      return SvgPicture.asset(
+        'assets/images/default_pokemon.svg',
+        height: height,
+        colorFilter: ColorFilter.mode(defaultColor, BlendMode.srcIn),
+      );
     }
 
     if (imageExtension == ImageExtension.svg) {

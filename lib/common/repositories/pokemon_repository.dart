@@ -21,7 +21,14 @@ class PokemonRepository {
 
     if (localPokemon != null) {
       final imageUrl = localPokemon.getImageUrlFromPokemonArt(art);
-      await _cacheImage(localPokemon.id, imageUrl, art: art);
+
+      var pokemonImage = await dataSource.getImage(id, pokemonArt: art);
+
+      if (pokemonImage == null) {
+        await _cacheImage(localPokemon.id, imageUrl, art: art);
+        // TODO: talvez revisar. ele está salvando como null
+        // quando não tem imagem, porém ele já retorna null por padrão
+      }
 
       return localPokemon;
     }

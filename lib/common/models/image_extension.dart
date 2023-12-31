@@ -7,6 +7,6 @@ class ImageExtension {
     if (url == null) return null;
 
     var urlSplit = url.split('/');
-    return urlSplit.last.split('.').first;
+    return urlSplit.last.split('.')[1];
   }
 }
