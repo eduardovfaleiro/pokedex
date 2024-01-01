@@ -23,6 +23,5 @@ class SearchPokemonViewModel extends ChangeNotifier {
 
   Future<void> searchPokemon() async {
     searchedPokemon = await pokemonRepository.searchPokemon(searchController.text.toLowerCase());
-    notifyListeners();
   }
 }

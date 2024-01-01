@@ -75,23 +75,21 @@ class _HomePageState extends State<HomePage> {
               children: [
                 SizedBox(
                   width: MediaQuery.of(context).size.width,
-                  child: Scrollbar(
-                    child: Consumer<SearchPokemonViewModel>(
-                      builder: (context, searchPokemonViewModel, _) {
-                        return FutureBuilder(
-                          future: _homeController.searchPokemon(),
-                          builder: (context, snapshot) {
-                            if (snapshot.connectionState == ConnectionState.waiting) {
-                              return const Center(child: PokeballLoading());
-                            }
+                  child: Consumer<SearchPokemonViewModel>(
+                    builder: (context, searchPokemonViewModel, _) {
+                      return FutureBuilder(
+                        future: searchPokemonViewModel.searchPokemon(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return Container();
+                          }
 
-                            final searchedPokemon = snapshot.data!;
+                          _homeController.pagingController.refresh();
 
-                            // TODO: continue from here
-                            return PagedGridView(
+                          return Scrollbar(
+                            child: PagedGridView(
                               pagingController: _homeController.pagingController,
                               padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).size.height * .1,
                                 top: MediaQuery.of(context).size.height * .085,
                                 left: 6,
                                 right: 6,
@@ -100,9 +98,21 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisCount: 2,
                                 childAspectRatio: 1.35,
                               ),
+                              showNewPageProgressIndicatorAsGridChild: false,
                               builderDelegate: PagedChildBuilderDelegate(
+                                newPageProgressIndicatorBuilder: (context) {
+                                  return Container(
+                                    alignment: Alignment.center,
+                                    padding: const EdgeInsets.symmetric(vertical: 24),
+                                    child: const PokeballLoading(),
+                                  );
+                                },
+                                firstPageProgressIndicatorBuilder: (context) {
+                                  return const Center(child: PokeballLoading());
+                                },
                                 itemBuilder: (context, pokemon, index) {
                                   final pokemonArt = pokemonArtViewModel.pokemonArt;
+
                                   final imageUrl = (pokemon as Pokemon).getImageUrlFromPokemonArt(pokemonArt);
 
                                   return FutureBuilder(
@@ -118,7 +128,7 @@ class _HomePageState extends State<HomePage> {
                                       return Padding(
                                         padding: const EdgeInsets.all(6),
                                         child: PokemonCard(
-                                          image: snapshot.data as Uint8List,
+                                          image: snapshot.data,
                                           pokemon,
                                           pokemonArt: pokemonArt,
                                           imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
@@ -128,68 +138,11 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                               ),
-                            );
-
-                            return GridView.builder(
-                              cacheExtent: MediaQuery.of(context).size.height * 1.5,
-                              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                                childAspectRatio: 1.35,
-                              ),
-                              itemCount: searchedPokemon.length,
-                              padding: EdgeInsets.only(
-                                bottom: MediaQuery.of(context).size.height * .1,
-                                top: MediaQuery.of(context).size.height * .085,
-                                left: 6,
-                                right: 6,
-                              ),
-                              itemBuilder: (context, index) {
-                                return Padding(
-                                  padding: const EdgeInsets.all(6),
-                                  child: FutureBuilder(
-                                    future: _homeController.getPokemonId(
-                                      searchedPokemon[index],
-                                      art: pokemonArtViewModel.pokemonArt,
-                                    ),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return const PokemonCardLoading();
-                                      }
-
-                                      if (!snapshot.hasData) return Container();
-
-                                      final pokemon = snapshot.data as Pokemon;
-                                      final imageUrl =
-                                          pokemon.getImageUrlFromPokemonArt(pokemonArtViewModel.pokemonArt);
-
-                                      return FutureBuilder(
-                                        future: _homeController.getPokemonImage(
-                                          searchedPokemon[index],
-                                          imageUrl,
-                                        ),
-                                        builder: (context, snapshot) {
-                                          if (snapshot.connectionState == ConnectionState.waiting) {
-                                            return const PokemonCardLoading();
-                                          }
-
-                                          return PokemonCard(
-                                            image: snapshot.data,
-                                            pokemon,
-                                            pokemonArt: pokemonArtViewModel.pokemonArt,
-                                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                                          );
-                                        },
-                                      );
-                                    },
-                                  ),
-                                );
-                              },
-                            );
-                          },
-                        );
-                        // }
-                      },
-                    ),
+                            ),
+                          );
+                        },
+                      );
+                    },
                   ),
                 ),
                 Align(

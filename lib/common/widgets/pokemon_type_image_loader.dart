@@ -42,7 +42,7 @@ class PokemonTypeImageLoader extends StatelessWidget {
       case 'ghost':
         return Icon(CommunityMaterialIcons.ghost, color: color);
       case 'dark':
-        return Icon(CommunityMaterialIcons.moon_full, color: color);
+        return Image.asset('assets/images/dark.png', cacheWidth: 20, color: color);
       case 'dragon':
         return Image.asset('assets/images/dragon.png', cacheWidth: 20, color: color);
       case 'steel':

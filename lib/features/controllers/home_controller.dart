@@ -16,7 +16,7 @@ class HomeController {
   final PokemonArtViewModel pokemonArtViewModel;
   final SearchPokemonViewModel searchPokemonViewModel;
 
-  final pagingController = PagingController(firstPageKey: 0); // TODO: continue
+  final pagingController = PagingController(firstPageKey: 0);
 
   HomeController({
     required this.pokemonRepository,
@@ -24,25 +24,28 @@ class HomeController {
     required this.searchPokemonViewModel,
   });
 
-  final pokemonOnDownloadCount = ValueNotifier(0);
-
   Future<void> initialize() async {
     searchPokemonViewModel.initialize();
     pokemonArtViewModel.initialize();
 
     pagingController.addPageRequestListener((pageKey) async {
-      if (searchPokemonViewModel.searchedPokemon.isEmpty) {
-        await searchPokemonViewModel.searchPokemon();
+      final pokemonRequests = <Future<Pokemon?>>[];
+
+      int maxIndex = pageKey + 16;
+
+      if (maxIndex > searchPokemonViewModel.searchedPokemon.length) {
+        maxIndex = searchPokemonViewModel.searchedPokemon.length;
       }
 
-      final newPokemon = <Pokemon>[];
-
-      for (int i = pageKey; i < pageKey + 16; i++) {
+      for (int i = pageKey; i < maxIndex; i++) {
         int id = searchPokemonViewModel.searchedPokemon[i];
-        final pokemon = await pokemonRepository.getPokemonId(id, art: pokemonArtViewModel.pokemonArt);
+        final pokemonRequest = pokemonRepository.getPokemonId(id, art: pokemonArtViewModel.pokemonArt);
 
-        if (pokemon != null) newPokemon.add(pokemon);
+        pokemonRequests.add(pokemonRequest);
       }
+
+      final newPokemon = await Future.wait(pokemonRequests)
+        ..removeWhere((pokemon) => pokemon == null);
 
       if (newPokemon.length < 16) {
         pagingController.appendLastPage(newPokemon);
@@ -55,10 +58,6 @@ class HomeController {
 
   Future<Pokemon?> getPokemonId(int pokemonId, {required PokemonArt art}) {
     return pokemonRepository.getPokemonId(pokemonId, art: art);
-  }
-
-  Future<List<int>> searchPokemon() async {
-    return searchPokemonViewModel.searchPokemon();
   }
 
   void switchArt() {

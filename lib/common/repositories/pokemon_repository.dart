@@ -4,6 +4,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
 import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
 
@@ -66,6 +67,9 @@ class PokemonRepository {
       var response = await http.get(Uri.parse(url));
       return response.bodyBytes;
     } on SocketException catch (error) {
+      debugPrint('_getPokemonImageUrl: $error');
+      return null;
+    } on ClientException catch (error) {
       debugPrint('_getPokemonImageUrl: $error');
       return null;
     }
