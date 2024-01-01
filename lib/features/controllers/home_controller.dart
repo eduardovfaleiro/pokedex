@@ -41,7 +41,7 @@ class HomeController {
         int id = searchPokemonViewModel.searchedPokemon[i];
         final pokemon = await pokemonRepository.getPokemonId(id, art: pokemonArtViewModel.pokemonArt);
 
-        newPokemon.add(pokemon);
+        if (pokemon != null) newPokemon.add(pokemon);
       }
 
       if (newPokemon.length < 16) {
