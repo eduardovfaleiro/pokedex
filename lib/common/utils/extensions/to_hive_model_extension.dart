@@ -1,5 +1,5 @@
-import '../../datasources/local/models/hive_pokemon.dart';
-import '../../datasources/local/models/hive_pokemon_stats.dart';
+import '../../datasources/local_pokemon/models/hive_pokemon.dart';
+import '../../datasources/local_pokemon/models/hive_pokemon_stats.dart';
 import '../../models/pokemon.dart';
 import '../../models/pokemon_stats.dart';
 

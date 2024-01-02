@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/datasources/local_pokemon/local_pokemon_datasource.dart';
 import 'package:pokedex/common/services/hive_service.dart';
 import 'package:pokedex/ui/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/ui/view_models/search_pokemon_view_model.dart';

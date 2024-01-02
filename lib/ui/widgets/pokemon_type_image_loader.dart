@@ -1,7 +1,5 @@
 import 'package:community_material_icon/community_material_icon.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/services/pokemon_colors_service.dart';
 
 class PokemonTypeImageLoader extends StatelessWidget {
   final double height;

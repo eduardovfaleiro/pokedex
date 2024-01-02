@@ -1,20 +1,14 @@
-import 'dart:typed_data';
-
 import 'package:community_material_icon/community_material_icon.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:pokedex/common/services/pokemon_colors_service.dart';
 import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
-import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
-import 'package:pokedex/common/widgets/pokeball_loading.dart';
-import 'package:pokedex/common/widgets/pokemon_image_loader.dart';
-import 'package:pokedex/common/widgets/pokemon_type_image_loader.dart';
-import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
-import 'package:pokedex/features/pages/pokemon_info/components/stat_component.dart';
 
-import '../../../common/models/image_extension.dart';
-import '../../../common/models/pokemon.dart';
 import '../../../common/models/pokemon_with_image.dart';
+import '../../controllers/pokemon_info_controller.dart';
+import '../../widgets/pokemon_image_loader.dart';
+import '../../widgets/pokemon_type_image_loader.dart';
+import 'stat_component.dart';
 
 class PokemonInfoPage extends StatefulWidget {
   final PokemonInfoController pokemonInfoController;

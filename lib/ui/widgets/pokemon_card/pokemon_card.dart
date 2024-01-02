@@ -1,17 +1,14 @@
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/datasources/local_pokemon/local_pokemon_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/extensions/capitalize_extension.dart';
-import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
-import 'package:pokedex/features/controllers/pokemon_info_controller.dart';
-import 'package:pokedex/features/pages/pokemon_info/pokemon_info_page.dart';
 import 'package:provider/provider.dart';
 
-import '../../models/pokemon.dart';
-import '../../models/pokemon_with_image.dart';
-import '../../utils/const/pokemon_art.dart';
+import '../../../common/models/pokemon_with_image.dart';
+import '../../../common/utils/const/pokemon_art.dart';
+import '../../controllers/pokemon_info_controller.dart';
+import '../../pages/pokemon_info/pokemon_info_page.dart';
+import '../../view_models/pokemon_art_view_model.dart';
 import '../pokemon_image_loader.dart';
 import '../pokemon_type_image_loader.dart';
 

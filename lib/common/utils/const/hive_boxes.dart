@@ -4,4 +4,5 @@ class HiveBoxes {
   static const pokemonImgDreamWorld = 'pokemonImgDreamWorld';
   static const pokemonImgHome = 'pokemonImgHome';
   static const pokemonImgOfficialArtwork = 'pokemonImgOfficialArtwork';
+  static const config = 'config';
 }

@@ -1,12 +1,10 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
-import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 
 import '../services/pokemon_colors_service.dart';
 import 'pokemon.dart';
-import 'pokemon_stats.dart';
 
 class PokemonWithImage extends Pokemon {
   final Uint8List? image;

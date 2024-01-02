@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/const/shared_preferences_instance.dart';
 
 import '../../common/utils/const/consts.dart';
 import '../../common/utils/const/pokemon_art.dart';
 
 class PokemonArtViewModel extends ChangeNotifier {
+  final PokemonRepository pokemonRepository;
   late PokemonArt pokemonArt;
 
   void initialize() {

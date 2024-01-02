@@ -3,7 +3,7 @@ import 'dart:typed_data';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/const/pokemon_art.dart';
 
-import '../../common/view_models/pokemon_art_view_model.dart';
+import '../view_models/pokemon_art_view_model.dart';
 
 class PokemonInfoController {
   final PokemonArtViewModel pokemonArtViewModel;

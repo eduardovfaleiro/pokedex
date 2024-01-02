@@ -1,7 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
-import 'package:pokedex/common/widgets/pokeball_loading.dart';
+
+import '../pokeball_loading.dart';
 
 class PokemonCardLoading extends StatelessWidget {
   const PokemonCardLoading({super.key});

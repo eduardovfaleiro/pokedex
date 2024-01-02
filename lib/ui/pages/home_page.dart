@@ -1,23 +1,19 @@
-import 'dart:typed_data';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/datasources/local_pokemon/local_pokemon_datasource.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
-import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
-import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
-import 'package:pokedex/common/widgets/my_text_field.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/models/image_extension.dart';
-import '../../common/models/pokemon.dart';
 import '../../common/models/pokemon_with_image.dart';
-import '../../common/widgets/pokeball_loading.dart';
-import '../../common/widgets/pokemon_card/pokemon_card.dart';
-import '../../common/widgets/pokemon_card/pokemon_card_loading.dart';
 import '../controllers/home_controller.dart';
+import '../view_models/pokemon_art_view_model.dart';
+import '../view_models/search_pokemon_view_model.dart';
+import '../widgets/my_text_field.dart';
+import '../widgets/pokeball_loading.dart';
+import '../widgets/pokemon_card/pokemon_card.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/http.dart';
-import 'package:pokedex/common/datasources/local/local_pokemon_datasource.dart';
+import 'package:pokedex/common/datasources/local_pokemon/local_pokemon_datasource.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
 
 import '../models/pokemon.dart';
@@ -27,8 +27,6 @@ class PokemonRepository {
 
       if (pokemonImage == null) {
         await _cacheImage(localPokemon.id, imageUrl, art: art);
-        // TODO: talvez revisar. ele está salvando como null
-        // quando não tem imagem, porém ele já retorna null por padrão
       }
 
       return localPokemon;
