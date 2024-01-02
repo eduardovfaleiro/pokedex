@@ -1,17 +1,14 @@
 import 'dart:typed_data';
 
-import 'package:pokedex/common/utils/extensions/get_hive_box_pokemon_art_extension.dart';
-
-import '../../models/pokemon.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:pokedex/common/utils/extensions/hive_mappers_extension.dart';
+import 'package:pokedex/common/utils/extensions/get_hive_box_pokemon_art_extension.dart';
+import 'package:pokedex/common/utils/extensions/to_entity_extension.dart';
+import 'package:pokedex/common/utils/extensions/to_hive_model_extension.dart';
 
 import '../../models/pokemon.dart';
-import '../../utils/const/consts.dart';
 import '../../utils/const/hive_boxes.dart';
 import '../../utils/const/pokemon_art.dart';
 import 'models/hive_pokemon.dart';
-import 'local_pokemon_datasource.dart';
 
 abstract class LocalPokemonDataSource {
   Future<void> cache(Pokemon pokemon);

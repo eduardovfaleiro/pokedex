@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:pokedex/common/utils/const/shared_preferences_instance.dart';
-import 'package:pokedex/common/utils/page_state_controller.dart';
 
-import '../utils/const/consts.dart';
-import '../utils/const/pokemon_art.dart';
+import '../../common/utils/const/consts.dart';
+import '../../common/utils/const/pokemon_art.dart';
 
-class PokemonArtViewModel extends ChangeNotifier with PageStateController {
+class PokemonArtViewModel extends ChangeNotifier {
   late PokemonArt pokemonArt;
 
   void initialize() {
@@ -27,8 +26,6 @@ class PokemonArtViewModel extends ChangeNotifier with PageStateController {
   }
 
   void switchArt() {
-    setPageState(LOADING);
-
     int currentIndex = PokemonArt.values.indexOf(pokemonArt);
 
     if (currentIndex == PokemonArt.values.length - 1) {
@@ -40,7 +37,6 @@ class PokemonArtViewModel extends ChangeNotifier with PageStateController {
     pokemonArt = PokemonArt.values[currentIndex];
     sharedPreferences.setString('pokemonArt', pokemonArt.name);
 
-    setPageState(SUCCESS);
     notifyListeners();
   }
 }
