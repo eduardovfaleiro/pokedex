@@ -9,13 +9,14 @@ import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_e
 import 'package:pokedex/common/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/common/view_models/search_pokemon_view_model.dart';
 import 'package:pokedex/common/widgets/my_text_field.dart';
-import 'package:pokedex/common/widgets/pokemon_card/pokemon_card_loading.dart';
 import 'package:provider/provider.dart';
 
 import '../../common/models/image_extension.dart';
 import '../../common/models/pokemon.dart';
+import '../../common/models/pokemon_with_image.dart';
 import '../../common/widgets/pokeball_loading.dart';
 import '../../common/widgets/pokemon_card/pokemon_card.dart';
+import '../../common/widgets/pokemon_card/pokemon_card_loading.dart';
 import '../controllers/home_controller.dart';
 
 class HomePage extends StatefulWidget {
@@ -41,6 +42,12 @@ class _HomePageState extends State<HomePage> {
     );
 
     _homeController.initialize();
+  }
+
+  @override
+  void dispose() {
+    _homeController.pagingController.dispose();
+    super.dispose();
   }
 
   @override
@@ -81,16 +88,17 @@ class _HomePageState extends State<HomePage> {
                         future: searchPokemonViewModel.searchPokemon(),
                         builder: (context, snapshot) {
                           if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Container();
+                            return const Center(child: PokeballLoading());
                           }
 
                           _homeController.pagingController.refresh();
 
                           return Scrollbar(
-                            child: PagedGridView(
+                            child: PagedGridView<int, PokemonWithImage>(
                               pagingController: _homeController.pagingController,
                               padding: EdgeInsets.only(
                                 top: MediaQuery.of(context).size.height * .085,
+                                bottom: 12,
                                 left: 6,
                                 right: 6,
                               ),
@@ -110,31 +118,16 @@ class _HomePageState extends State<HomePage> {
                                 firstPageProgressIndicatorBuilder: (context) {
                                   return const Center(child: PokeballLoading());
                                 },
-                                itemBuilder: (context, pokemon, index) {
-                                  final pokemonArt = pokemonArtViewModel.pokemonArt;
-
-                                  final imageUrl = (pokemon as Pokemon).getImageUrlFromPokemonArt(pokemonArt);
-
-                                  return FutureBuilder(
-                                    future: _homeController.getPokemonImage(
-                                      pokemon.id,
-                                      imageUrl,
+                                itemBuilder: (context, pokemonWithImage, index) {
+                                  return Padding(
+                                    padding: const EdgeInsets.all(6),
+                                    child: PokemonCard(
+                                      pokemonWithImage,
+                                      pokemonArt: pokemonArtViewModel.pokemonArt,
+                                      imageExtension: ImageExtension.getFromPokemonUrl(
+                                        pokemonWithImage.getImageUrlFromPokemonArt(pokemonArtViewModel.pokemonArt),
+                                      ),
                                     ),
-                                    builder: (context, snapshot) {
-                                      if (snapshot.connectionState == ConnectionState.waiting) {
-                                        return Container();
-                                      }
-
-                                      return Padding(
-                                        padding: const EdgeInsets.all(6),
-                                        child: PokemonCard(
-                                          image: snapshot.data,
-                                          pokemon,
-                                          pokemonArt: pokemonArt,
-                                          imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                                        ),
-                                      );
-                                    },
                                   );
                                 },
                               ),

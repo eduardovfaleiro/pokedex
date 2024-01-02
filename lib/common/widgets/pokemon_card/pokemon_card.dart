@@ -10,21 +10,20 @@ import 'package:pokedex/features/pages/pokemon_info/pokemon_info_page.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/pokemon.dart';
+import '../../models/pokemon_with_image.dart';
 import '../../utils/const/pokemon_art.dart';
 import '../pokemon_image_loader.dart';
 import '../pokemon_type_image_loader.dart';
 
 class PokemonCard extends StatelessWidget {
   final PokemonArt pokemonArt;
-  final Pokemon pokemon;
-  final Uint8List? image;
+  final PokemonWithImage pokemon;
   final String? imageExtension;
 
   const PokemonCard(
     this.pokemon, {
     super.key,
     required this.pokemonArt,
-    required this.image,
     required this.imageExtension,
   });
 
@@ -37,6 +36,7 @@ class PokemonCard extends StatelessWidget {
           MaterialPageRoute(builder: (context) {
             return PokemonInfoPage(
               pokemon,
+              imageExtension: imageExtension,
               pokemonInfoController: PokemonInfoController(
                 pokemonArtViewModel: context.read<PokemonArtViewModel>(),
                 pokemonRepository: PokemonRepository(
@@ -76,7 +76,7 @@ class PokemonCard extends StatelessWidget {
               padding: const EdgeInsets.only(right: 12, left: 4),
               child: PokemonImageLoader(
                 pokemon.id,
-                image,
+                pokemon.image,
                 height: 75,
                 imageExtension: imageExtension,
                 defaultColor: Color.lerp(pokemon.color, Colors.white, 0.5)!,

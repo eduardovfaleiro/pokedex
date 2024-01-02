@@ -14,12 +14,14 @@ import 'package:pokedex/features/pages/pokemon_info/components/stat_component.da
 
 import '../../../common/models/image_extension.dart';
 import '../../../common/models/pokemon.dart';
+import '../../../common/models/pokemon_with_image.dart';
 
 class PokemonInfoPage extends StatefulWidget {
   final PokemonInfoController pokemonInfoController;
-  final Pokemon pokemon;
+  final PokemonWithImage pokemon;
+  final String? imageExtension;
 
-  const PokemonInfoPage(this.pokemon, {super.key, required this.pokemonInfoController});
+  const PokemonInfoPage(this.pokemon, {super.key, required this.pokemonInfoController, required this.imageExtension});
 
   @override
   State<PokemonInfoPage> createState() => _PokemonInfoPageState();
@@ -71,30 +73,13 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Builder(builder: (context) {
-                      final imageUrl = widget.pokemon.getImageUrlFromPokemonArt(
-                        widget.pokemonInfoController.getPokemonArt(),
-                      );
-
-                      return FutureBuilder(
-                        future: widget.pokemonInfoController.getPokemonImage(widget.pokemon.id, imageUrl),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return Padding(
-                                padding: const EdgeInsets.all(55),
-                                child: PokeballLoading(color: Color.lerp(widget.pokemon.color, Colors.white, 0.7)));
-                          }
-
-                          return PokemonImageLoader(
-                            widget.pokemon.id,
-                            snapshot.data,
-                            defaultColor: Color.lerp(widget.pokemon.color, Colors.white, 0.5)!,
-                            imageExtension: ImageExtension.getFromPokemonUrl(imageUrl),
-                            height: 160,
-                          );
-                        },
-                      );
-                    }),
+                    PokemonImageLoader(
+                      widget.pokemon.id,
+                      widget.pokemon.image,
+                      defaultColor: Color.lerp(widget.pokemon.color, Colors.white, 0.5)!,
+                      imageExtension: widget.imageExtension,
+                      height: 160,
+                    ),
                     Text(
                       widget.pokemon.name.capitalize(),
                       style: TextStyle(
