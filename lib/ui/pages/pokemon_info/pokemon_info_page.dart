@@ -101,9 +101,9 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
                                   child: Row(
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
-                                      _buildLabelValue('Height', '23cm'),
+                                      _buildLabelValue('Height', '${widget.pokemon.heightMeter}m'),
                                       const SizedBox(width: 32),
-                                      _buildLabelValue('Weight', '6,9kg'),
+                                      _buildLabelValue('Weight', '${widget.pokemon.weightKg}kg'),
                                     ],
                                   ),
                                 ),
@@ -185,14 +185,22 @@ class _PokemonInfoPageState extends State<PokemonInfoPage> {
   ];
 
   Widget _buildLabelValue(String label, String value) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Text(label, style: TextStyle(color: _darkerPokemonColor)),
-        const SizedBox(width: 4),
-        Text(value, style: TextStyle(color: _darkerPokemonColor, fontSize: 18, fontWeight: FontWeight.w500)),
-      ],
+    return Expanded(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(label, style: TextStyle(color: _darkerPokemonColor)),
+          const SizedBox(width: 4),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(value, style: TextStyle(color: _darkerPokemonColor, fontSize: 18, fontWeight: FontWeight.w500)),
+            ),
+          ),
+        ],
+      ),
     );
   }
 

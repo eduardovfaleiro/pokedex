@@ -26,7 +26,7 @@ class Pokemon {
   });
 
   Color get color => PokemonColorsService.get(typesStr.first);
-  double get heightCentimeter => heightDecimeter / 10;
+  double get heightMeter => heightDecimeter / 10;
   double get weightKg => weightHectogram / 10;
 
   List<String> get typesStr {

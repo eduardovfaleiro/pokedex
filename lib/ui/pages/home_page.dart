@@ -72,25 +72,25 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       body: SafeArea(
-        child: Consumer<PokemonArtViewModel>(
-          builder: (context, pokemonArtViewModel, _) {
-            return Stack(
-              children: [
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  child: Consumer<SearchPokemonViewModel>(
-                    builder: (context, searchPokemonViewModel, _) {
-                      return FutureBuilder(
-                        future: searchPokemonViewModel.searchPokemon(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: PokeballLoading());
-                          }
+        child: Stack(
+          children: [
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              child: Consumer<SearchPokemonViewModel>(
+                builder: (context, searchPokemonViewModel, _) {
+                  return FutureBuilder(
+                    future: searchPokemonViewModel.searchPokemon(),
+                    builder: (context, snapshot) {
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return const Center(child: PokeballLoading());
+                      }
 
-                          _homeController.pagingController.refresh();
+                      _homeController.pagingController.refresh();
 
-                          return Scrollbar(
-                            child: PagedGridView<int, PokemonWithImage>(
+                      return Scrollbar(
+                        child: Consumer<PokemonArtViewModel>(
+                          builder: (context, pokemonArtViewModel, _) {
+                            return PagedGridView<int, PokemonWithImage>(
                               pagingController: _homeController.pagingController,
                               padding: EdgeInsets.only(
                                 top: MediaQuery.of(context).size.height * .085,
@@ -127,28 +127,28 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                               ),
-                            ),
-                          );
-                        },
+                            );
+                          },
+                        ),
                       );
                     },
-                  ),
+                  );
+                },
+              ),
+            ),
+            Align(
+              alignment: Alignment.topCenter,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                child: MyTextField(
+                  controller: _homeController.searchPokemonViewModel.searchController,
+                  hintText: 'Search for Pokemon',
+                  preffixIcon: Icons.search,
+                  showClear: true,
                 ),
-                Align(
-                  alignment: Alignment.topCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                    child: MyTextField(
-                      controller: _homeController.searchPokemonViewModel.searchController,
-                      hintText: 'Search for Pokemon',
-                      preffixIcon: Icons.search,
-                      showClear: true,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
+              ),
+            ),
+          ],
         ),
       ),
     );

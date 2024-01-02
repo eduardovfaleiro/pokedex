@@ -23,7 +23,7 @@ class PokemonWithImage extends Pokemon {
   @override
   Color get color => PokemonColorsService.get(typesStr.first);
   @override
-  double get heightCentimeter => heightDecimeter / 10;
+  double get heightMeter => heightDecimeter / 10;
   @override
   double get weightKg => weightHectogram / 10;
 

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:pokedex/common/datasources/local_config_datasource.dart';
 import 'package:pokedex/common/datasources/local_pokemon/local_pokemon_datasource.dart';
+import 'package:pokedex/common/repositories/config_repository.dart';
 import 'package:pokedex/common/services/hive_service.dart';
 import 'package:pokedex/ui/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/ui/view_models/search_pokemon_view_model.dart';
@@ -19,11 +21,17 @@ void main() async {
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => PokemonArtViewModel()),
+        ChangeNotifierProvider(create: (context) {
+          return PokemonArtViewModel(
+            configRepository: ConfigRepository(HiveConfigDataSource()),
+          );
+        }),
         ChangeNotifierProvider(
-          create: (context) => SearchPokemonViewModel(
-            pokemonRepository: PokemonRepository(HivePokemonDataSource()),
-          ),
+          create: (context) {
+            return SearchPokemonViewModel(
+              pokemonRepository: PokemonRepository(HivePokemonDataSource()),
+            );
+          },
         ),
       ],
       child: const MyApp(),

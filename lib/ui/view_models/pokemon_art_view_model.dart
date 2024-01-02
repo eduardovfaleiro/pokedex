@@ -1,33 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:pokedex/common/repositories/pokemon_repository.dart';
-import 'package:pokedex/common/utils/const/shared_preferences_instance.dart';
+import 'package:pokedex/common/repositories/config_repository.dart';
 
-import '../../common/utils/const/consts.dart';
 import '../../common/utils/const/pokemon_art.dart';
 
 class PokemonArtViewModel extends ChangeNotifier {
-  final PokemonRepository pokemonRepository;
+  final ConfigRepository configRepository;
   late PokemonArt pokemonArt;
 
-  void initialize() {
-    String? savedPokemonArt = sharedPreferences.getString('pokemonArt') ?? Consts.defaultPokemonArt.name;
+  PokemonArtViewModel({required this.configRepository});
 
-    switch (savedPokemonArt) {
-      case 'dreamWorld':
-        pokemonArt = PokemonArt.dreamWorld;
-        break;
-      case 'officialArtwork':
-        pokemonArt = PokemonArt.officialArtwork;
-        break;
-      case 'home':
-        pokemonArt = PokemonArt.home;
-        break;
-      default:
-        throw UnimplementedError();
-    }
+  Future<void> initialize() async {
+    pokemonArt = await configRepository.getPokemonArt();
   }
 
-  void switchArt() {
+  Future<void> switchArt() async {
     int currentIndex = PokemonArt.values.indexOf(pokemonArt);
 
     if (currentIndex == PokemonArt.values.length - 1) {
@@ -37,7 +23,7 @@ class PokemonArtViewModel extends ChangeNotifier {
     }
 
     pokemonArt = PokemonArt.values[currentIndex];
-    sharedPreferences.setString('pokemonArt', pokemonArt.name);
+    await configRepository.setPokemonArt(pokemonArt);
 
     notifyListeners();
   }
