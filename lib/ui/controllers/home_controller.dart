@@ -2,22 +2,25 @@
 
 import 'dart:typed_data';
 
+import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
+import 'package:pokedex/common/utils/const/consts.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
+import 'package:pokedex/ui/view_models/pokemon_art_view_model.dart';
+import 'package:pokedex/ui/view_models/search_pokemon_view_model.dart';
 
 import '../../common/models/pokemon.dart';
 import '../../common/models/pokemon_with_image.dart';
 import '../../common/utils/const/pokemon_art.dart';
-import '../view_models/pokemon_art_view_model.dart';
-import '../view_models/search_pokemon_view_model.dart';
 
 class HomeController {
   final PokemonRepository pokemonRepository;
   final PokemonArtViewModel pokemonArtViewModel;
   final SearchPokemonViewModel searchPokemonViewModel;
 
-  final pagingController = PagingController<int, PokemonWithImage>(firstPageKey: 0);
+  var pagingController = PagingController<int, PokemonWithImage>(firstPageKey: 0);
+  final scrollController = ScrollController();
 
   HomeController({
     required this.pokemonRepository,
@@ -25,11 +28,16 @@ class HomeController {
     required this.searchPokemonViewModel,
   });
 
+  bool isLoadingPokemon = false;
+
   Future<void> initialize() async {
     searchPokemonViewModel.initialize();
     pokemonArtViewModel.initialize();
 
     pagingController.addPageRequestListener((pageKey) async {
+      if (isLoadingPokemon) return;
+      isLoadingPokemon = true;
+
       final pokemonRequests = <Future<Pokemon?>>[];
       final pokemonImageRequests = <Future<Uint8List?>>[];
       final pokemonArt = pokemonArtViewModel.pokemonArt;
@@ -52,14 +60,13 @@ class HomeController {
 
       for (int i = 0; i < newPokemon.length; i++) {
         final pokemon = newPokemon[i] as Pokemon;
-
-        pokemonImageRequests.add(
-          pokemonRepository.getPokemonImage(
-            pokemon.id,
-            pokemon.getImageUrlFromPokemonArt(pokemonArt),
-            pokemonArt: pokemonArt,
-          ),
+        final pokemonImageRequest = pokemonRepository.getPokemonImage(
+          pokemon.id,
+          pokemon.getImageUrlFromPokemonArt(pokemonArt),
+          pokemonArt: pokemonArt,
         );
+
+        pokemonImageRequests.add(pokemonImageRequest);
       }
 
       final newPokemonImages = await Future.wait(pokemonImageRequests);
@@ -75,12 +82,18 @@ class HomeController {
         );
       }
 
+      if (pagingController.itemList != null) {
+        print('ITEMLIST.LENGTH: ${pagingController.itemList!.length}');
+      }
+
       if (newPokemon.length < 16) {
         pagingController.appendLastPage(newPokemonWithImage);
       } else {
         int nextPageKey = pageKey + newPokemon.length;
         pagingController.appendPage(newPokemonWithImage, nextPageKey);
       }
+
+      isLoadingPokemon = false;
     });
   }
 

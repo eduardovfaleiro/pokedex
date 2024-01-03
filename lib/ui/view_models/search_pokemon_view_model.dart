@@ -11,13 +11,18 @@ class SearchPokemonViewModel extends ChangeNotifier {
   final searchController = TextEditingController();
   var searchedPokemon = <int>[];
 
+  String? lastSearchArgs;
+
   void initialize() {
     searchController.removeListener(() {});
     searchController.clear();
     searchedPokemon.clear();
 
     searchController.addListener(() {
+      if (searchController.text == lastSearchArgs) return;
+
       notifyListeners();
+      lastSearchArgs = searchController.text;
     });
   }
 

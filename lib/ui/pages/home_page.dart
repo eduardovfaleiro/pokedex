@@ -76,21 +76,21 @@ class _HomePageState extends State<HomePage> {
           children: [
             SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: Consumer<SearchPokemonViewModel>(
-                builder: (context, searchPokemonViewModel, _) {
-                  return FutureBuilder(
-                    future: searchPokemonViewModel.searchPokemon(),
-                    builder: (context, snapshot) {
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return const Center(child: PokeballLoading());
-                      }
+              child: Consumer<PokemonArtViewModel>(
+                builder: (context, pokemonArtViewModel, _) {
+                  return Consumer<SearchPokemonViewModel>(
+                    builder: (context, searchPokemonViewModel, _) {
+                      return FutureBuilder(
+                        future: searchPokemonViewModel.searchPokemon(),
+                        builder: (context, snapshot) {
+                          if (snapshot.connectionState == ConnectionState.waiting) {
+                            return const Center(child: PokeballLoading());
+                          }
 
-                      _homeController.pagingController.refresh();
+                          _homeController.pagingController.refresh();
 
-                      return Scrollbar(
-                        child: Consumer<PokemonArtViewModel>(
-                          builder: (context, pokemonArtViewModel, _) {
-                            return PagedGridView<int, PokemonWithImage>(
+                          return Scrollbar(
+                            child: PagedGridView<int, PokemonWithImage>(
                               pagingController: _homeController.pagingController,
                               padding: EdgeInsets.only(
                                 top: MediaQuery.of(context).size.height * .085,
@@ -102,6 +102,7 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisCount: 2,
                                 childAspectRatio: 1.35,
                               ),
+                              physics: const BouncingScrollPhysics(),
                               showNewPageProgressIndicatorAsGridChild: false,
                               builderDelegate: PagedChildBuilderDelegate(
                                 newPageProgressIndicatorBuilder: (context) {
@@ -127,9 +128,9 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                               ),
-                            );
-                          },
-                        ),
+                            ),
+                          );
+                        },
                       );
                     },
                   );

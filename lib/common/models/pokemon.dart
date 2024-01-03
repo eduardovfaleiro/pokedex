@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:pokedex/common/utils/const/pokemon_art.dart';
 
 import '../services/pokemon_colors_service.dart';
 import 'pokemon_stats.dart';
