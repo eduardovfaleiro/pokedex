@@ -5,7 +5,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:pokedex/common/repositories/pokemon_repository.dart';
-import 'package:pokedex/common/utils/const/consts.dart';
 import 'package:pokedex/common/utils/extensions/get_image_url_from_pokemon_art_extension.dart';
 import 'package:pokedex/ui/view_models/pokemon_art_view_model.dart';
 import 'package:pokedex/ui/view_models/search_pokemon_view_model.dart';
@@ -80,10 +79,6 @@ class HomeController {
             newPokemonImages[i],
           ),
         );
-      }
-
-      if (pagingController.itemList != null) {
-        print('ITEMLIST.LENGTH: ${pagingController.itemList!.length}');
       }
 
       if (newPokemon.length < 16) {
