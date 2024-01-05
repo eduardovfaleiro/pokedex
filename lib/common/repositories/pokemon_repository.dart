@@ -88,13 +88,23 @@ class PokemonRepository {
 
     var filteredPokemonIds = <int>[];
 
-    for (int i = 0; i < pokemonUrls.length; i++) {
-      if (pokemonUrls[i]['name']!.contains(args)) {
-        filteredPokemonIds.add(int.parse(pokemonUrls[i]['url']!.split('/')[6]));
+    if (args.isEmpty) {
+      for (int i = 0; i < pokemonUrls.length; i++) {
+        filteredPokemonIds.add(_getIdFromUrl(pokemonUrls[i]['url']!));
+      }
+    } else {
+      for (int i = 0; i < pokemonUrls.length; i++) {
+        if (pokemonUrls[i]['name']!.contains(args)) {
+          filteredPokemonIds.add(_getIdFromUrl(pokemonUrls[i]['url']!));
+        }
       }
     }
 
     return filteredPokemonIds;
+  }
+
+  int _getIdFromUrl(String url) {
+    return int.parse(url.split('/')[6]);
   }
 
   Future<List<Map>> _getPokemonUrlList() async {
@@ -105,7 +115,10 @@ class PokemonRepository {
       var response = await http.get(Uri.parse('${PokeApi.pokemon}/?limit=9999&offset=0'));
       var pokemonUrlList = List<Map<dynamic, dynamic>>.from(jsonDecode(response.body)['results']);
 
-      await dataSource.cachePokemonUrlList(pokemonUrlList);
+      if (localPokemonUrls.isEmpty) {
+        await dataSource.cachePokemonUrlList(pokemonUrlList);
+      }
+
       return pokemonUrlList;
     } on http.ClientException catch (error) {
       debugPrint('_getPokemonUrlList: $error');

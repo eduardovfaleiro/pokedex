@@ -11,22 +11,16 @@ class SearchPokemonViewModel extends ChangeNotifier {
   final searchController = TextEditingController();
   var searchedPokemon = <int>[];
 
-  String? lastSearchArgs;
-
-  void initialize() {
+  Future<void> initialize() async {
     searchController.removeListener(() {});
     searchController.clear();
     searchedPokemon.clear();
 
-    searchController.addListener(() {
-      if (searchController.text == lastSearchArgs) return;
-
-      notifyListeners();
-      lastSearchArgs = searchController.text;
-    });
+    await searchPokemon();
   }
 
   Future<void> searchPokemon() async {
     searchedPokemon = await pokemonRepository.searchPokemon(searchController.text.toLowerCase());
+    notifyListeners();
   }
 }

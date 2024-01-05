@@ -10,6 +10,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'common/repositories/pokemon_repository.dart';
 import 'common/utils/const/shared_preferences_instance.dart';
+import 'ui/controllers/home_controller.dart';
 import 'ui/pages/home_page.dart';
 
 void main() async {
@@ -52,7 +53,13 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       debugShowCheckedModeBanner: false,
-      home: const HomePage(),
+      home: HomePage(
+        HomeController(
+          pokemonRepository: PokemonRepository(HivePokemonDataSource()),
+          pokemonArtViewModel: context.read<PokemonArtViewModel>(),
+          searchPokemonViewModel: context.read<SearchPokemonViewModel>(),
+        ),
+      ),
     );
   }
 }

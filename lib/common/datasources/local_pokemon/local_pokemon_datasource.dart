@@ -40,9 +40,8 @@ class HivePokemonDataSource implements LocalPokemonDataSource {
 
   @override
   Future<void> cachePokemonUrlList(List<Map<dynamic, dynamic>> pokemonUrlList) async {
-    for (int i = 0; i < pokemonUrlList.length; i++) {
-      await pokemonUrlBox.add(pokemonUrlList[i]);
-    }
+    await pokemonUrlBox.clear();
+    await pokemonUrlBox.addAll(pokemonUrlList);
   }
 
   @override

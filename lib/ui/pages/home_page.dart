@@ -13,36 +13,22 @@ import '../view_models/pokemon_art_view_model.dart';
 import '../view_models/search_pokemon_view_model.dart';
 import '../widgets/my_text_field.dart';
 import '../widgets/pokeball_loading.dart';
+import '../widgets/pokeball_loading_message.dart';
 import '../widgets/pokemon_card/pokemon_card.dart';
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+  final HomeController homeController;
+
+  const HomePage(this.homeController, {super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-  late final HomeController _homeController;
-
-  @override
-  void initState() {
-    super.initState();
-
-    _homeController = HomeController(
-      pokemonRepository: PokemonRepository(
-        HivePokemonDataSource(),
-      ),
-      pokemonArtViewModel: context.read<PokemonArtViewModel>(),
-      searchPokemonViewModel: context.read<SearchPokemonViewModel>(),
-    );
-
-    _homeController.initialize();
-  }
-
   @override
   void dispose() {
-    _homeController.pagingController.dispose();
+    widget.homeController.pagingController.dispose();
     super.dispose();
   }
 
@@ -65,33 +51,34 @@ class _HomePageState extends State<HomePage> {
             child: IconButton(
                 tooltip: 'Switch art',
                 onPressed: () {
-                  _homeController.switchArt();
+                  if (widget.homeController.actionsLocked) return;
+                  widget.homeController.switchArt();
                 },
                 icon: const Icon(CupertinoIcons.restart)),
           ),
         ],
       ),
-      body: SafeArea(
-        child: Stack(
-          children: [
-            SizedBox(
-              width: MediaQuery.of(context).size.width,
-              child: Consumer<PokemonArtViewModel>(
-                builder: (context, pokemonArtViewModel, _) {
-                  return Consumer<SearchPokemonViewModel>(
-                    builder: (context, searchPokemonViewModel, _) {
-                      return FutureBuilder(
-                        future: searchPokemonViewModel.searchPokemon(),
-                        builder: (context, snapshot) {
-                          if (snapshot.connectionState == ConnectionState.waiting) {
-                            return const Center(child: PokeballLoading());
-                          }
+      body: FutureBuilder(
+        future: widget.homeController.initialize(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const PokeballLoadingMessage('Preparing Pokedex...');
+          }
 
-                          _homeController.pagingController.refresh();
+          return SafeArea(
+            child: Stack(
+              children: [
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  child: Consumer<PokemonArtViewModel>(
+                    builder: (context, pokemonArtViewModel, _) {
+                      return Consumer<SearchPokemonViewModel>(
+                        builder: (context, searchPokemonViewModel, _) {
+                          widget.homeController.pagingController.refresh();
 
                           return Scrollbar(
                             child: PagedGridView<int, PokemonWithImage>(
-                              pagingController: _homeController.pagingController,
+                              pagingController: widget.homeController.pagingController,
                               padding: EdgeInsets.only(
                                 top: MediaQuery.of(context).size.height * .085,
                                 bottom: 12,
@@ -102,8 +89,8 @@ class _HomePageState extends State<HomePage> {
                                 crossAxisCount: 2,
                                 childAspectRatio: 1.35,
                               ),
-                              physics: const BouncingScrollPhysics(),
                               showNewPageProgressIndicatorAsGridChild: false,
+                              physics: const BouncingScrollPhysics(),
                               builderDelegate: PagedChildBuilderDelegate(
                                 newPageProgressIndicatorBuilder: (context) {
                                   return Container(
@@ -113,7 +100,7 @@ class _HomePageState extends State<HomePage> {
                                   );
                                 },
                                 firstPageProgressIndicatorBuilder: (context) {
-                                  return const Center(child: PokeballLoading());
+                                  return const PokeballLoadingMessage('Loading your Pokemon...');
                                 },
                                 itemBuilder: (context, pokemonWithImage, index) {
                                   return Padding(
@@ -133,24 +120,34 @@ class _HomePageState extends State<HomePage> {
                         },
                       );
                     },
-                  );
-                },
-              ),
-            ),
-            Align(
-              alignment: Alignment.topCenter,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
-                child: MyTextField(
-                  controller: _homeController.searchPokemonViewModel.searchController,
-                  hintText: 'Search for Pokemon',
-                  preffixIcon: Icons.search,
-                  showClear: true,
+                  ),
                 ),
-              ),
+                Align(
+                  alignment: Alignment.topCenter,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
+                    child: MyTextField(
+                      controller: widget.homeController.searchPokemonViewModel.searchController,
+                      hintText: 'Search for Pokemon',
+                      onSubmitted: (args) {
+                        if (widget.homeController.actionsLocked) return;
+                        widget.homeController.searchPokemon();
+                      },
+                      suffixIcon: IconButton(
+                          icon: const Icon(Icons.search),
+                          onPressed: () {
+                            if (widget.homeController.actionsLocked) return;
+                            widget.homeController.searchPokemon();
+                          },
+                          visualDensity: VisualDensity.compact),
+                      showClear: true,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

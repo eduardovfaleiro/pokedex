@@ -19,7 +19,6 @@ class HomeController {
   final SearchPokemonViewModel searchPokemonViewModel;
 
   var pagingController = PagingController<int, PokemonWithImage>(firstPageKey: 0);
-  final scrollController = ScrollController();
 
   HomeController({
     required this.pokemonRepository,
@@ -27,14 +26,16 @@ class HomeController {
     required this.searchPokemonViewModel,
   });
 
+  bool isSearching = false;
+  bool isSwitchingArt = false;
   bool isLoadingPokemon = false;
 
-  Future<void> initialize() async {
-    searchPokemonViewModel.initialize();
-    pokemonArtViewModel.initialize();
+  bool get actionsLocked => isSearching || isSwitchingArt || isLoadingPokemon;
 
+  Future<void> initialize() async {
+    pagingController.removePageRequestListener((_) {});
     pagingController.addPageRequestListener((pageKey) async {
-      if (isLoadingPokemon) return;
+      if (actionsLocked) return;
       isLoadingPokemon = true;
 
       final pokemonRequests = <Future<Pokemon?>>[];
@@ -90,14 +91,25 @@ class HomeController {
 
       isLoadingPokemon = false;
     });
+
+    await pokemonArtViewModel.initialize();
+    await searchPokemonViewModel.initialize();
   }
 
   Future<Pokemon?> getPokemonId(int pokemonId, {required PokemonArt art}) {
     return pokemonRepository.getPokemonId(pokemonId, art: art);
   }
 
-  void switchArt() {
-    pokemonArtViewModel.switchArt();
+  void switchArt() async {
+    isSwitchingArt = true;
+    await pokemonArtViewModel.switchArt();
+    isSwitchingArt = false;
+  }
+
+  Future<void> searchPokemon() async {
+    isSearching = true;
+    await searchPokemonViewModel.searchPokemon();
+    isSearching = false;
   }
 
   Future<Uint8List?> getPokemonImage(int id, String? imageUrl) {
