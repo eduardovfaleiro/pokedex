@@ -27,7 +27,7 @@ O principal propósito desse app foi me aprofundar no consumo de **APIs REST**, 
 - Gerenciamento de estado: Provider
 
 ## 🖼️ Prévia
-[![Demonstração do Pokédex](https://img.youtube.com/vi/hvz_ZomjZp4/maxresdefault.jpg)](https://www.youtube.com/watch?v=hvz_ZomjZp4)
+https://github.com/user-attachments/assets/a1c4a2d6-2515-43e8-a48a-67e02a7a1670
 
 ## 🔗 Link para download
 [https://drive.google.com/file/d/1LaifKKq6VmDl1IKq_A-sBbW9aB_3_wXJ/view?usp=drive_link](https://drive.google.com/file/d/1LaifKKq6VmDl1IKq_A-sBbW9aB_3_wXJ/view?usp=drive_link)
